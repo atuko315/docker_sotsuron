@@ -6,7 +6,7 @@
 
 \section{強化学習\cite{RL}}
 強化学習はタスクを選択をする主体と環境のやり取りとして定式化し、その相互作用から学習する形でタスクに取り組む分野である。
-状態$s$と行動$a$が次の状態$s'$と環境から与えられる報酬$r$が決定されると仮定する。その仮定の下、環境から与えられる報酬の合計$G$(以下収益と記載)を最大化する。
+状態$s$と行動$a$が次の状態${s'}(=T(s, a), Tは遷移関数)$と環境から与えられる報酬$r$が決定されると仮定する。その仮定の下、環境から与えられる報酬の合計$G$(以下収益と記載)を最大化する。
 報酬を大きくするためには状態sに応じて適切な(より大きな報酬をもらえる可能性が高い)行動を選択する必要がある。
 ある状態$s$である行動$a$をとった場合の収益に対して見積もりをとり、見込まれる値が最も大きい行動を選択することでより大きな収益を獲得できると期待できる。
 このようなある状態である行動を取った場合の収益の見積もりを$Q(s, a)$とした場合、
@@ -26,16 +26,17 @@ Temporary Difference法やMonte Carlo法等が基本的な$V(s),Q(s, a)$の更�
 \subsection{ボードゲームへの応用}
 ボードゲームでは通例、状態sは盤面の状況、行動はプレイヤーの選択、報酬はゲームの最後に勝敗として与えられる。
 状態$s$(ゲームの状況)と行動$a$(プレイヤーの選択)によって盤面は次の状態$s'$に遷移し、次の行動$a'$(他のプレイヤーによる選択)を受け付ける、というサイクルにゲームの進行を定式化して表現することができる。
-また、上述した強化学習における$V(s),Q(s, a)$の推定はそれぞれ「ある盤面はプレイヤーにとって勝利に近いのか」、「ある盤面においてある選択をした場合、プレイヤーはどれ程勝利に近くなるのか」を表現していると解釈される。
-AlphaGo\cite{}やStockFish\cite{StockFish}、DeepLearningShogi\cite{dlshogi}では状態$s$は最新$N$ステップの盤面や手数などのゲームのプレイにおいて重要な情報である。
+また、上述した強化学習における$V(s)$の推定は「ある盤面はプレイヤーにとって勝利に近いのか」を表現していると解釈される。
+AlphaGo\cite{AlphaGo}やStockFish\cite{StockFish}、DeepLearningShogi\cite{dlshogi}では状態$s$は最新$N$ステップの盤面や手数などのゲームのプレイにおいて重要な情報である。
 状態は行列等の形式に抽象化され、行動は次にプレイヤーが打つ箇所の座標となる。
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=\linewidth]{./figure/ccl.png}
-	\caption{AlphaZeroのチェスのやつとconnect4と強化学習の式を合わせていい感じに}
-	\label{fig:ccl}
+	\includegraphics[width=\linewidth]{./figure/transition.png}
+	\caption{ボードゲームにおける強化学習モデル}
+	\label{fig:transition}
 \end{figure}
-本論文で使用したalphazero baselineにおける入力は最新の盤面の状態を空白を0, 先番(赤)の石の位置を1, 後ろ
+
+本論文で使用したalphazero\_baselineにおける入力は最新の盤面の状態を空白を0, 先番(赤)の石の位置を1, 後ろ
 番（黄）の位置を-1として抽象化した6$\times$7の行列となる。
 また、後述するconnect4のルール上の制約により次にプレイヤーが打つ箇所(行動)は列の数と同数の7つに限定される。
 
@@ -53,9 +54,9 @@ $\left\{0, 0.1, 0.2, 0, 0, 0.7, 0.8\right\}$であるとき、方策中の最も
 訓練とかどうするん？
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=\linewidth]{./figure/ccl.png}
-	\caption{方策と局面評価、あと残差結合の図も}
-	\label{fig:ccl}
+	\includegraphics[width=\linewidth]{./figure/network.png}
+	\caption{AlphaZeroネットワークのイメージ}
+	\label{fig:network}
 \end{figure}
 \paragraph{モンテカルロ木探索}
 モンテカルロ木探索ではニューラルネットワークから得た方策$P(s)(以下s=\left\{ s_{-N+1}, ..., s_0 \right\}と表記する)$と局面評価$V(s)$をシミュレーション

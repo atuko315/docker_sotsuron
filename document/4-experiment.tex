@@ -10,10 +10,22 @@ connect4の一般的なボードの広さは$6\times7$であり$6\times7$のコ�
 Tromp\cite{data}によるconnect4の$\alpha-\beta$木探索によって導かれた各盤面の最善手とそのデータも一般に公開されている。
 また、connect4は盤上に全ての情報が開示されており、結果もどちらか一方の勝利または引き分けのみであるため2人ゼロ和完全情報ゲームに分類される。
 実験では提案手法をconnect4へ適用した際のstep4における共通項$c$として最終的に四つ以上繋がっている石の位置を用いた。
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{./figure/connect4.png}
+	\caption{connect4}
+	\label{fig:connect4}
+\end{figure}
 \section{alphazero\_baseline\cite{baseline}}
-alphazero\_baselinはアルファゼロをconnect4用に簡易的に模したネットワークであり、入力は最新の盤面$s_0$、出力は$1\times7$(7はボードの列の数)の方策$P(s)(以下s=s_0と定める)$とスカラー値の局面評価$V(s)$(値域は-1から1)である。
+alphazero\_baselinはalphaZeroをconnect4用に簡易的に模したネットワークであり、入力は最新の盤面$s_0$、出力は$1\times7$(7はボードの列の数)の方策$P(s)(以下s=s_0と定める)$とスカラー値の局面評価$V(s)$(値域は-1から1)である。
 方策は確率分布であり、要素の値が大きいインデックスを選択することで勝利に近づくと予想される。
 局面評価は入力に対する評価を表しており、1が入力の手番のプレイヤーにとっての勝利、-1が敗北の予想を表している。
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{./figure/baseline.png}
+	\caption{alphazero\_baselineの入出力}
+	\label{fig:baseline}
+\end{figure}
 
 \section{データ実験}
 \label{chap:evaluation}
@@ -44,18 +56,35 @@ fcountと同様に$O'$と$O$が両方とも空集合である場合fcountは1と
 \section{システム実験}
 提案手法の人間に対する有効性を示すため以下のような自作したコネクトフォーの学習支援システムを用いて実験を行った。
 実験対象者は計22人の10代～20代学生（男性17名:女性5名）となった。
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{./figure/basicSystem.png}
+	\caption{開始画面}
+	\label{fig:basic}
+\end{figure}
 \subsection{実験手順}
 実験は被験者一人あたりにつき三回行われ、前半二回が第一段階（提案手法による学習）、後半一回が第二段階（被験者同士の対戦）となった。
 ここでは第一段階である提案手法の学習について述べる。
 \paragraph{第一段階（提案手法による学習）}
-提案システムを用いた学習は
+提案システムを用いた学習はさらに
 \begin{itemize}
 	\item AIシステム（alphazero\_baseline）との対戦
 	\item　提案手法によるゲームの振り返り
 \end{itemize}
-の2ステップに分けられる。
+の2ステップに分けられる。AIシステムとの対戦が終了するとシステムは「振り返りモード」に移行する。
+ユーザーはゲームの任意の地点において提案手法または比較手法が提案する予想図を見ることができる。
+実験の際には被験者をグループA（提案手法による予想図を見せるグループ）とグループB（比較手法による予想図を見せるグループ）に分類した。
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{./figure/lookBack.png}
+	\caption{振り返り画面}
+	\label{fig:lookBack}
+\end{figure}
 \subsection{評価指標}
-
+システム実験の評価指標は主観評価と客観評価の二つに分けられる。
+主観評価は被験者による五段階評価であり、「タスクの熟達度に関連する質問」と「タスクの楽しさ・面白さ関連する質問」の二つに分けられる。
+具体的な質問事項は付録？に記載する。
+客観評価はグループAの被験者とグループBの被験者の対戦成績である。
 
 \subsection{実験結果}
 表\ref{table:result-1}に
