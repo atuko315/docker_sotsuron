@@ -63,8 +63,7 @@ $\left\{0, 0.1, 0.2, 0, 0, 0.7, 0.8\right\}$であるとき、方策中の最も
 によって改善する。
 モンテカルロ木探索ではシミュレーションによって$s$をノード、各行動$a$を枝とした決定木を構築する。
 最終的に各ノード$s$から派生する各行動$a$の分布$\left\{a_0, a_1, ..., a_n\right\}$が改善された方策となる。
-一方、局面評価もまたモンテカルロ木探索により決定木が拡張されるなかで更新される。以下に決定木と局面評$V(s)$の更新アルゴリズムを示す。
-表アルゴリズム\ref{table:result-1}
+一方、局面評価もまたモンテカルロ木探索により決定木が拡張されるなかで更新される。?ページに決定木と局面評価$V(s)$の詳細な更新アルゴリズムを示し、ここでは大まかな流れを示す。。
 step1ではまず、探索の開始地点となるノード$s$を決定する。次にStep2:再帰部分では以下の処理を再起的に呼び出す。
 \begin{enumerate}
 	\item ノードを探索したことがない場合
@@ -78,6 +77,74 @@ $P(s_e), V(s_e)$を用いて
 パラメータをこんなふうに更新する。
 
 このようなプロセスによって構築された決定木を用いてモデルは対戦を行う。
+\begin{algorithm}
+	\caption{モンテカルロ木探索の詳細 (Page 1)}
+	\begin{algorithmic}[1]
+		\Function{MonteCarloTreeSearch}{state}
+			\While{time\_limit not reached}
+				\State \Call{Explore}{state}
+			\EndWhile
+			\State \Return \Call{BestMove}{state}
+		\EndFunction
+		
+		\Function{Explore}{state}
+			\State $root \gets$ \Call{CreateNode}{state}
+			\While{simulation not finished}
+				\State $node \gets$ \Call{SelectNode}{root}
+				\State $result \gets$ \Call{Simulate}{node}
+				\State \Call{Backpropagate}{node, result}
+			\EndWhile
+		\EndFunction
+		
+		\Function{CreateNode}{state}
+			\State \Return \text{Node with state $state$, visits 0, and total value 0}
+		\EndFunction
+		
+		\Function{SelectNode}{node}
+			\While{node is fully expanded and not terminal}
+				\State $node \gets$ \Call{UCTSelect}{node}
+			\EndWhile
+			\If{unexplored children exist}
+				\State \Return \Call{Expand}{node}
+			\Else
+				\State \Return node
+			\EndIf
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+	\caption{モンテカルロ木探索の詳細 (Page 2)}
+	\begin{algorithmic}[1]
+		\Function{UCTSelect}{node}
+			\State \Return \text{Child of $node$ with maximum UCT value}
+		\EndFunction
+		
+		\Function{Expand}{node}
+			\State \Return \text{Random unexplored child of $node$}
+		\EndFunction
+		
+		\Function{Simulate}{node}
+			\State \Return \text{Result of a simulated playout from $node$}
+		\EndFunction
+		
+		\Function{Backpropagate}{node, result}
+			\While{node is not null}
+				\State \text{Update visit count and total value of $node$ based on $result$}
+				\State $node \gets$ \text{Parent of $node$}
+			\EndWhile
+		\EndFunction
+		
+		\Function{BestMove}{state}
+			\State \Return \text{Child of root with the highest visit count}
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+
+
+
+
 \subsection{ボードゲームAIの問題点}
 StockFish\cite{StockFish}やDeepLearningShogi\cite{dlshogi}などの従来のボードゲームAIはそのゲーム固有の知識(ドメイン知識)に基づくものが多く、「ある条件を満たすときにある選択をする」と言ったようにその挙動をルールとして表すことが可能である。
 一方でAlphaZeroのニューラルネットワーク+木探索の手法では

@@ -42,6 +42,23 @@ step2と同様に探索の開始地点$s_{start}$からstep3中にたどり着�
 	\caption{提案手法のイメージ}
 	\label{fig:merit}
 \end{figure}
+\begin{algorithm}
+    \caption{提案手法のアルゴリズム}
+    \begin{algorithmic}[1]
+        \State Select initial state $s_{start}$ with policy $P(s_{start})$ recommending action $a_m$
+        \State Set $s_{now} = s_{start}$ and $a_{now} = a_m$
+        \For {$l$ steps}
+            \State Retrieve top $k$ actions ${a_0, a_1, ..., a_{k-1}}$ from policy $P(s_{now})$ at node $s_{now}$
+            \For {each action $a_i$}
+                \State Calculate $s_{next_i} = T(s_{now}, a_i)$ using transition function $T$
+                \State Apply steps 2 and 3 to $s_{next_i}$ recursively
+            \EndFor
+            \State Record trajectory ${\rm{traj}_{s_{now}}}$ from $s_{start}$ to each visited node $s_{middle}$
+        \EndFor
+        \State Apply step 4 to obtain sets $S = \{s_{edge_0}, s_{edge_1}, ..., s_{edge_{k^l-1}}\}$
+        \State Apply step 5 to find the largest subset $S_{max}$ and extract trajectories for each element
+    \end{algorithmic}
+\end{algorithm}
 
 
 次章で示すようにconnect4タスクにおいて収集される軌道の集合においては末端部分のいくつかの選択が共通している傾向が確認された。
