@@ -1,5 +1,119 @@
-\chapter{のモデル化}
+\chapter{alphazero\_baseline}
+\section{ニューラルネットワーク}
+モデルの構成は以下である。
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{./figure/baselineNetwork.png}
+	\caption{alphazero\_baselineネットワークの構成}
+	\label{fig:baselineNetwork}
+\end{figure}
+また、ネットワークの訓練過程は以下である。
+\begin{enumerate}
+	\item 本来ゲームに存在する時系列の要素を含む
+	\item 評価基準が勝敗に直結する
+    \item 人間のドメイン知識に依存しない
+\end{enumerate}
 
-\section{異なる}
+\cite{dataset}
+また、訓練中のパラメータの値は以下のようになった。
+\begin{table}[H]
+	\caption{パラメータ名と値}
+	\centering
+	\scalebox{0.98}[0.98]{
+		\begin{tabular}{c|c}
+			
+			学習率(lr)    & 0.001 \\ \hline
+			dropout    & 0.3 \\
+			epochs      & 5 \\
+			batch\_size     & 64 \\
+			num\_channels  & 64 \\
+		\end{tabular}
+	}
+	\label{table:result-1}
+\end{table}
+\section{alphazero\_baselineのパラメータ更新}
+alphazero\_baselineのパラメータ更新は第二章で述べた手順とほぼ同一であるがPUCTスコア$U(s, a)$の定義における
+$ C_{\textrm{cpuct}}$はハイパーパラメータである。
+($N(s), N(s, a)はそれぞれs,(s, a)に対して探索を行った回数$)
+\begin{equation}
+	{U(s, a)= C_{\textrm{cpuct}}P(s, a)\frac{\sqrt{N(s)}}{1+N(s, a)}\\
+	}
+\end{equation}
 
-あ
+$Q(s, a)$は以下のように更新される。
+($s_cは現在の探索ノードsから見た最もPUCTスコアU(s, a)とQ(s, a)の和の高い子ノード$)
+\begin{equation}
+	{Q(s, a)=\frac{N(s, a)Q(s, a)+V(s_c)}{N(s, a)+1}\\
+	}
+\end{equation}
+
+\newpage
+\begin{algorithm}
+    \caption{PV-MCTS in alphazero-baseline (Part 1: Exploration)}
+    \begin{algorithmic}[1]
+        \State $t$: 決定木
+        \State $T$: 遷移関数
+        \State $N(s, a)$: $(s, a)$の組み合わせを探索した回数
+        \State $Q(s, a)$: 行動価値関数 ($\textrm{Explore}(s)$の平均)
+        \State $W(s, a)$: 行動価値の総和$(W(s, a)=Q(s, a)N(s, a))$
+        \State $P(s, a)(=P(s_n), s_n=T(s, a))$: 
+        \State ニューラルネットワークから出力された方策
+        \State $V(s, a)(=V(s_n), s_n=T(s, a))$: 
+        \State ニューラルネットワークから出力された局面評価
+        \Function{Explore}{$s_{\text{start}}$}
+            \State Set $s_{now} = s_{start}$ and $a_{now} = a_m$
+            \For {each simulation}
+                \State $\zeta \gets empty list$
+                \State $s_{\text{current}} \gets s_{\text{start}}$
+                \While {$s_{\text{current}}$ がゲームの終了状態でない場合}
+                    \State $a_t \gets TreePolicy(s)$
+                    \State (Tは遷移関数)
+                    \State $(s_{\text{current}}, a_t)$を $\zeta $の末尾に追加
+                    \State $s_{\text{next}} \gets T(s_{\text{current}}, a_t)$
+                    \State $s_{\text{current}} \gets s_{\text{next}}$
+                    
+                \EndWhile
+                \State $G \gets V(s_e)$ 
+                \State($s_e$は$s_{start}$から探索してたどり着いたノード$s_e$)
+                \State \Call{Backpropagate}{$\zeta, G$}
+            \EndFor
+        \EndFunction
+        
+        
+    \end{algorithmic}
+\end{algorithm}
+\begin{algorithm}
+    \caption{PV-MCTS in alphazero-baseline (Part 2: Backpropagation)}
+    \begin{algorithmic}[1]
+        \Function{TreePolicy}{$s$}
+            \If {$s$が探索されていない子ノードを持つとき}
+                \State $s_c \gets T(s, a)$ ($s_c$は未探索のノード)
+                \State \Call{InitNode}{$s_c$}
+                \State \Return $a$
+            \Else
+                \State 以下のPUCTスコア$U(s, a)$を計算
+                \State $U(s, a)= C_{\textrm{cpuct}}P(s, a)\frac{\sqrt{N(s)}}{1+N(s, a)}$
+                \State $(N(s)=\Gamma N(s, a))$
+                \State 以下のように$a$を求める
+                \State $a = {\textrm{argmax}}_a (Q(s, a)+U(s, a))$
+                \State \Return $a$
+                
+            \EndIf
+        \EndFunction
+        \Function{Backpropagate}{$\zeta, G$}
+            \For {each node-action pair $(s, a)$ in $\zeta$}
+                \State $N(s, a) \gets 0$
+                \State $W(s, a) \gets 0$
+                \State $Q(s, a) \gets 0$
+            \EndFor
+        \EndFunction
+        \Function{InitNode}{$s$}
+            \For {each action $a$ from  $s$}
+                \State $N(s, a) \gets N(s, a)+1$
+                \State $W(s, a) \gets W(s, a)+G$
+                \State $Q(s, a) \gets \frac{N(s, a)Q(s, a)+V(s_c)}{N(s, a)+1}$
+				\State $(s_c = T(s, a))$
+            \EndFor
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}

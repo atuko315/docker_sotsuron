@@ -42,14 +42,14 @@ AlphaGo\cite{AlphaGo}やStockFish\cite{StockFish}、DeepLearningShogi\cite{dlsho
 
 \subsection{AlphaZero\cite{AlphaZero}}
 AlphaZeroは2016年に登場し、元世界チャンピオンであるイ・セドルに対して四勝一敗の成績を収めたAlphaGoの汎用版である。
-AlphaZeroは先述の$V(s),Q(s, a)$を推定する際にニューラルネットワークとモンテカルロ木探索システムを使用する。
+AlphaZeroは先述の$V(s),Q(s, a)$を推定する際にニューラルネットワークとPV-モンテカルロ木探索システムを使用する。
 \paragraph{ニューラルネットワーク}
 AlphaZero内のニューラルネットワークに対する入力は最新$8$ステップの盤面($\left\{ s_{-7}, ..., s_0 \right\}$,$s_{-i}$は$i$ステップ前の盤面,$s_{0}$は現在の盤面)であり、出力は方策$P(\left\{ s_{-7}, ..., s_0 \right\})$と
 局面評価$V(\left\{ s_{-7}, ..., s_0 \right\})$の二種類である。\
 ネットワークは1つの畳み込み層と20の残差結合ネットワークで構成されている。方策は「現在の状況$s_0$から次にどこを選択すべきか」を表現しており、次に選択すべき座標を確率分布の形式で表現する。
 alphazero\_baselineにおける選択肢は列の数と等しい7であるため、1$\times$7の行列となる。方策内の値が大きさがAIによるその着手の評価と解釈され、成分が大きい座標を次に選択することが推奨される。例えば方策が
 $\left\{0, 0.1, 0.2, 0, 0, 0.7, 0.8\right\}$であるとき、方策中の最も大きい成分は7番目の0.8であるため、プレイヤーは次に７列目を選択する事が推奨される。
-また、局面評価$V(\left\{ s_{-7}, ..., s_0 \right\})$は「（過去７ステップ分の状態を含めた）現在の状況$s_0$は勝利に近いのか」を表現しており、値が上限に近ければ近い程、現在の状況$s_0$が次の着手を選択するプレイヤーにとっての勝利に近いことを表している。
+また、局面評価$V(\left\{ s_{-7}, ..., s_0 \right\})$は「（過去8ステップ分の状態を含めた）現在の状況$s_0$は勝利に近いのか」を表現しており、値が上限に近ければ近い程、現在の状況$s_0$が次の着手を選択するプレイヤーにとっての勝利に近いことを表している。
 
 訓練とかどうするん？
 \begin{figure}[t]
@@ -58,10 +58,10 @@ $\left\{0, 0.1, 0.2, 0, 0, 0.7, 0.8\right\}$であるとき、方策中の最も
 	\caption{AlphaZeroネットワークのイメージ}
 	\label{fig:network}
 \end{figure}
-\paragraph{モンテカルロ木探索}
-モンテカルロ木探索ではニューラルネットワークから得た方策$P(s)(以下s=\left\{ s_{-N+1}, ..., s_0 \right\}と表記する)$と局面評価$V(s)$をシミュレーション
+\paragraph{PV-モンテカルロ木探索}
+PV-モンテカルロ木探索ではニューラルネットワークから得た方策$P(s)(以下s=\left\{ s_{-N+1}, ..., s_0 \right\}と表記する)$と局面評価$V(s)$をシミュレーション
 によって改善する。
-モンテカルロ木探索ではシミュレーションによって$s$をノード、各行動$a$を枝とした決定木を構築する。
+PV-モンテカルロ木探索ではシミュレーションによって$s$をノード、各行動$a$を枝とした決定木を構築する。
 最終的に各ノード$s$から派生する各行動$a$の分布$\left\{a_0, a_1, ..., a_n\right\}$が改善された方策となる。
 一方、局面評価もまたモンテカルロ木探索により決定木が拡張されるなかで更新される。?ページに決定木と局面評価$V(s)$の詳細な更新アルゴリズムを示し、ここでは大まかな流れを示す。。
 step1ではまず、探索の開始地点となるノード$s$を決定する。次にStep2:再帰部分では以下の処理を再起的に呼び出す。
@@ -69,80 +69,90 @@ step1ではまず、探索の開始地点となるノード$s$を決定する。
 	\item ノードを探索したことがない場合
 	ニューラルネットワークから出力された方策$P(s)$と局面評価$V(s)$を返却する
 	\item ノードを探索したことがある場合
-	以下のpuctスコアに従い、子ノード$s_c$を選び、$s_c$に対して探索を行いその結果である$P(s_e), V(s_e)(s_eは再帰処理の結果たどり着く
-	決定木の端のノード)$を受け取る。
+	以下のpuctスコア$U(s, a)$に従い、子ノード$s_c$を選び、$s_c$に対して再帰的に探索を行いその結果である$P(s_e), V(s_e)(s_eは再帰処理の結果たどり着く
+	決定木の端のノード)$を返却する。($N(s), N(s, a)はそれぞれs,(s, a)に対して探索を行った回数$)
+	\begin{equation}
+		{U(s, a)= C(s)P(s, a)\frac{\sqrt{N(s)}}{1+N(s, a)}\\
+		}
+	\end{equation}
+	
+	\begin{equation}
+		{C(s)=\textrm{log}\frac{1+N(s)+C_{\textrm{base}}}{C_{\textrm{base}}}+C_{\textrm{init}}\\
+		(C_{\textrm{base}}, C_{\textrm{init}}はハイパーパラメータ)}
+	\end{equation}
 \end{enumerate}
-
-$P(s_e), V(s_e)$を用いて
-パラメータをこんなふうに更新する。
-
 このようなプロセスによって構築された決定木を用いてモデルは対戦を行う。
+\newpage
 \begin{algorithm}
-	\caption{モンテカルロ木探索の詳細 (Page 1)}
-	\begin{algorithmic}[1]
-		\Function{MonteCarloTreeSearch}{state}
-			\While{time\_limit not reached}
-				\State \Call{Explore}{state}
-			\EndWhile
-			\State \Return \Call{BestMove}{state}
-		\EndFunction
-		
-		\Function{Explore}{state}
-			\State $root \gets$ \Call{CreateNode}{state}
-			\While{simulation not finished}
-				\State $node \gets$ \Call{SelectNode}{root}
-				\State $result \gets$ \Call{Simulate}{node}
-				\State \Call{Backpropagate}{node, result}
-			\EndWhile
-		\EndFunction
-		
-		\Function{CreateNode}{state}
-			\State \Return \text{Node with state $state$, visits 0, and total value 0}
-		\EndFunction
-		
-		\Function{SelectNode}{node}
-			\While{node is fully expanded and not terminal}
-				\State $node \gets$ \Call{UCTSelect}{node}
-			\EndWhile
-			\If{unexplored children exist}
-				\State \Return \Call{Expand}{node}
-			\Else
-				\State \Return node
-			\EndIf
-		\EndFunction
-	\end{algorithmic}
+    \caption{PV-MCTS in AlphaZero (Part 1: Exploration)}
+    \begin{algorithmic}[1]
+        \State $t$: 決定木
+        \State $T$: 遷移関数
+        \State $N(s, a)$: $(s, a)$の組み合わせを探索した回数
+        \State $Q(s, a)$: 行動価値関数 ($\textrm{Explore}(s)$の平均)
+        \State $W(s, a)$: 行動価値の総和$(W(s, a)=Q(s, a)N(s, a))$
+        \State $P(s, a)(=P(s_n), s_n=T(s, a))$: 
+        \State ニューラルネットワークから出力された方策
+        \State $V(s, a)(=V(s_n), s_n=T(s, a))$: 
+        \State ニューラルネットワークから出力された局面評価
+        \Function{Explore}{$s_{\text{start}}$}
+            \State Set $s_{now} = s_{start}$ and $a_{now} = a_m$
+            \For {each simulation}
+                \State $\zeta \gets empty list$
+                \State $s_{\text{current}} \gets s_{\text{start}}$
+                \While {$s_{\text{current}}$ がゲームの終了状態でない場合}
+                    \State $a_t \gets TreePolicy(s)$
+                    \State (Tは遷移関数)
+                    \State $(s_{\text{current}}, a_t)$を $\zeta $の末尾に追加
+                    \State $s_{\text{next}} \gets T(s_{\text{current}}, a_t)$
+                    \State $s_{\text{current}} \gets s_{\text{next}}$
+                    
+                \EndWhile
+                \State $G \gets V(s_e)$ 
+                \State($s_e$は$s_{start}$から探索してたどり着いたノード$s_e$)
+                \State \Call{Backpropagate}{$\zeta, G$}
+            \EndFor
+        \EndFunction
+        
+        
+    \end{algorithmic}
 \end{algorithm}
-
 \begin{algorithm}
-	\caption{モンテカルロ木探索の詳細 (Page 2)}
-	\begin{algorithmic}[1]
-		\Function{UCTSelect}{node}
-			\State \Return \text{Child of $node$ with maximum UCT value}
-		\EndFunction
-		
-		\Function{Expand}{node}
-			\State \Return \text{Random unexplored child of $node$}
-		\EndFunction
-		
-		\Function{Simulate}{node}
-			\State \Return \text{Result of a simulated playout from $node$}
-		\EndFunction
-		
-		\Function{Backpropagate}{node, result}
-			\While{node is not null}
-				\State \text{Update visit count and total value of $node$ based on $result$}
-				\State $node \gets$ \text{Parent of $node$}
-			\EndWhile
-		\EndFunction
-		
-		\Function{BestMove}{state}
-			\State \Return \text{Child of root with the highest visit count}
-		\EndFunction
-	\end{algorithmic}
+    \caption{PV-MCTS in AlphaZero (Part 2: Backpropagation)}
+    \begin{algorithmic}[1]
+        \Function{TreePolicy}{$s$}
+            \If {$s$が探索されていない子ノードを持つとき}
+                \State $s_c \gets T(s, a)$ ($s_c$は未探索のノード)
+                \State \Call{InitNode}{$s_c$}
+                \State \Return $a$
+            \Else
+                \State 以下のPUCTスコア$U(s, a)$を計算
+                \State $U(s, a)= C(s)P(s, a)\frac{\sqrt{N(s)}}{1+N(s, a)}$
+                \State $C(s)=\textrm{log}\frac{1+N(s)+C_{\textrm{base}}}{C_{\textrm{base}}}+C_{\textrm{init}}$
+                \State($C_{\textrm{base}}$, $C_{\textrm{init}}$はハイパーパラメータ)
+                \State $(N(s)=\Gamma N(s, a))$
+                \State 以下のように$a$を求める
+                \State $a = {\textrm{argmax}}_a (Q(s, a)+U(s, a))$
+                \State \Return $a$
+                
+            \EndIf
+        \EndFunction
+        \Function{Backpropagate}{$\zeta, G$}
+            \For {each node-action pair $(s, a)$ in $\zeta$}
+                \State $N(s, a) \gets 0$
+                \State $W(s, a) \gets 0$
+                \State $Q(s, a) \gets 0$
+            \EndFor
+        \EndFunction
+        \Function{InitNode}{$s$}
+            \For {each action $a$ from  $s$}
+                \State $N(s, a) \gets N(s, a)+1$
+                \State $W(s, a) \gets W(s, a)+G$
+                \State $Q(s, a) \gets \frac{W(s, a)}{N(s, a)}$
+            \EndFor
+        \EndFunction
+    \end{algorithmic}
 \end{algorithm}
-
-
-
 
 
 \subsection{ボードゲームAIの問題点}

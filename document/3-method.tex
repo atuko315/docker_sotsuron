@@ -15,15 +15,15 @@
 本手法はAlphaZeroシステムのニューラルネットワークと木探索部分のうち、主に木探索の部分を対象に適用される。
 本手法では決定木の判断を説明する際に最も有用な部分を決定木から抽出することを主な目的としており、アルゴリズムは決定木構造を持つ多くのシステムに応用可能である。
 アルゴリズムの主な流れは以下の通りである。
-1:説明を付与する状態$s_{start}$を選択する。このとき$s_{start}$に対するモデルの方策$P(s_{start})$が推奨する行動$a_m$を取り出す。
+1:説明を付与する状態と行動の組$(s_{start}, a)$を選択する。
 このとき注目している状態$s_{now}, a_{now}$はそれぞれ
 \begin{equation}
 	{s_{now}=s_{start},}
-	{a_{now}=a_m}
+	{a_{now}=a}
 \end{equation}
 とする。
 2:以下の流れを$l$ステップ分繰り返す
-決定木中の注目しているード$s_{now}$における方策$P(s_{now})$中の値にして上位$k$個分の行動${a_0, a_1, ..., a_{k-1}}(a_iはk+1番目に有望な行動とする)$を取り出す。
+決定木中の注目しているード$s_{now}$における訪問回数$N(s_{now})$中の値にして上位$k$個分の行動${a_0, a_1, ..., a_{k-1}}(a_iはk+1番目に有望な行動とする)$を取り出す。
 ${s_{next_0}, s_{next_1}, ..., s_{next_{k-1}}}(s_{next_i}=T(s_{now}, a_i), Tは遷移関数)$の各ノードに対してstep2
 の操作を繰り返す。プログラム上は探索の開始地点$s_{start}$からstep2中にたどり着く各ノード$s_{middle}$までの軌道$\rm{{traj}_{s_middle}}(=[{a'}_{t_0}, {a'}_{t_1}, ..., {a'}_{t_{l-1}}]、 t_iはi番目のステップを表す)$を記録しておく。
 
@@ -42,21 +42,74 @@ step2と同様に探索の開始地点$s_{start}$からstep3中にたどり着�
 	\caption{提案手法のイメージ}
 	\label{fig:merit}
 \end{figure}
+\newpage
 \begin{algorithm}
-    \caption{提案手法のアルゴリズム}
+    \caption{提案手法のアルゴリズム(part1)}
     \begin{algorithmic}[1]
-        \State Select initial state $s_{start}$ with policy $P(s_{start})$ recommending action $a_m$
-        \State Set $s_{now} = s_{start}$ and $a_{now} = a_m$
-        \For {$l$ steps}
-            \State Retrieve top $k$ actions ${a_0, a_1, ..., a_{k-1}}$ from policy $P(s_{now})$ at node $s_{now}$
-            \For {each action $a_i$}
-                \State Calculate $s_{next_i} = T(s_{now}, a_i)$ using transition function $T$
-                \State Apply steps 2 and 3 to $s_{next_i}$ recursively
-            \EndFor
-            \State Record trajectory ${\rm{traj}_{s_{now}}}$ from $s_{start}$ to each visited node $s_{middle}$
-        \EndFor
-        \State Apply step 4 to obtain sets $S = \{s_{edge_0}, s_{edge_1}, ..., s_{edge_{k^l-1}}\}$
-        \State Apply step 5 to find the largest subset $S_{max}$ and extract trajectories for each element
+        \State $t$: 手法を適用する探索木
+        \State $l$: 盤面の収集を行う手数
+        \State $k$: 一度に集める盤面の数
+        \State $\zeta(s, s')$: ノード$s$から$s'$までの軌道
+        
+       
+        \Function{MyAlgorithm}{$s_{start}, a, l, k$}
+           \State $s_{now}\gets s_{start}$
+           \State $a_{now}\gets a$
+           \State $Z_0 \gets$\Call{CollectBoards}{$s_{now}, a_{now}, l, k$}
+           \State $(Z_0 ={\zeta(s_{start}, {s'}_0), ..., \zeta(s_{start}, {s'}_{k^l-1})})$
+           \State $ Z \gets$ empty list
+           \For {each $\zeta(s_{start}, {s'}_i)$ in $Z_0$}
+             \State $\zeta(s_{start}, s_{{edge}_i}) \gets$ \Call{Traverse}{${s'}_i, \zeta(s_{start}, {s'}_i)$}
+             \State $\zeta(s_{start}, s_{{edge}_i})$を$Z$の末尾に追加
+           \EndFor
+           \State 収集された終了状態の集合$S(={s_{edge_0},s_{edge_1}, ..., s_{edge_{k^l-1}}})$を任意の共通項$c$で副集合${S_0, S_1, ..., S_q}$に分割する
+           \State 最も要素数の多い副集合$S_{max}$中の各要素${s_{e_0}, s_{e_1}, ...,  s_{e_u}}$
+           \State に対応する軌道の集合$Z_{max}(=\zeta(s_{start}, s_{e_0}), \zeta(s_{start}, s_{e_1}), ..., \zeta(s_{start}, s_{e_u}))$を保存
+           \State \Return $Z_{max}$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+\begin{algorithm}
+    \caption{提案手法のアルゴリズム(part2)}
+    \begin{algorithmic}[1]       
+        \Function{CollectBoards}{$s, a, l, k$}
+           \State $s_{now} \gets T(s, a)$
+           
+           \State $Z \gets $ empty queue
+           \State 訪問回数$N(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す
+           \For {each $a_i$ in $\alpha$}
+             \State $s_{{next}_i} \gets T(s_{now}, a_i)$
+             \State $\zeta(s_{now},s_{{next}_i})(={s_{now}, a_i, s_{{next}_i}})$を$Z$の末尾に追加
+           \EndFor
+           \If{l=1}
+             \Return $Z$
+           \EndIf
+           \State $i \gets 1$
+           \While {$i < l$}
+                \For {each $\zeta(s_{now}, s_{j})$ in $Z$}
+                    \State $\zeta(s_{now}, s_{j})$ を $Z$からポップ
+                    \State 訪問回数$N(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す
+                    \For {each $a_i$ in $\alpha$}
+                        \State $s_{{next}_j} \gets T(s_{j}, a_i)$
+                        \State $\zeta(s_{now},s_{{next}_i})(=\zeta(s_{now}, s_{j}).append({a_i, s_{{next}_i}}))$を$Z$の末尾に追加
+                    \EndFor
+                    
+                \EndFor     
+           \EndWhile
+           \Return $Z(={\zeta(s_{start}, {s'}_0), ..., \zeta(s_{start}, {s'}_{k^l-1})})$
+        \EndFunction
+        \Function {Traverse}{$s, \zeta(s_{start}, s)$}
+        \State $s_{now} \gets s$
+        \State $\zeta_r \gets \zeta(s_{start}, s)$
+        \While {$s_{now}が探索済みかつ終了状態でない$}
+            \State $a_t \gets \textrm{argmax}_a N(s_{now}, a)$
+            \State $s_n \gets T(s_{now}, a_t)$
+            \State $\zeta_r.append({a_t, s_n})$
+        \EndWhile
+        \Return $\zeta_r$
+        \EndFunction
+       
+        
     \end{algorithmic}
 \end{algorithm}
 

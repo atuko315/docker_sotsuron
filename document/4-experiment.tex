@@ -95,7 +95,24 @@ fcountと同様に$O'$と$O$が両方とも空集合である場合fcountは1と
 客観評価はグループAの被験者とグループBの被験者の対戦成績である。
 
 \subsection{実験結果}
-表\ref{table:result-1}に
+表\ref{table:result-online}に実験結果を示した。いずれの場合もfcountにおいて提案手法は比較手法より高い値を示した。
+\begin{table}[H]
+	\caption{あああといいいの予測誤差}
+	\centering
+	\scalebox{0.98}[0.98]{
+		\begin{tabular}{c|c|c|c|c}
+			\multicolumn{1}{c}{} & \multicolumn{2}{|c|}{fcount} 
+			& \multicolumn{2}{c|}{fdcount}\\ \hline \hline
+			手数(盤面数, 補間の有無)    & 提案手法 & 比較手法 & 提案手法 & 比較手法 \\ \hline
+			19-24(9862, 無)    & \bf{0.60} & 0.43 & 0.55 & \bf{0.62} \\
+			19-24(9862, 有)    & \bf{0.63} & 0.44 & 0.61 & \bf{0.63}  \\
+			13-24(21022, 無)   & \bf{0.52} & 0.37 & 0.55 & \bf{0.56}  \\
+			13-24(21022, 有)   & \bf{0.55} & 0.37 & 0.55 & \bf{0.56}  \\
+		\end{tabular}
+	}
+	\label{table:result-online}
+\end{table}
+
 
 \begin{comment}
 	また，ああああああ
@@ -115,5 +132,5 @@ fcountと同様に$O'$と$O$が両方とも空集合である場合fcountは1と
 			提案手法  & 1.0977 & \bf{0.8698} & 1.3824 & 0.9439 & 1.2061 & \bf{0.8516} \\
 		\end{tabular}
 	}
-	\label{table:result-1}
+	\label{table:result-2}
 \end{table}
