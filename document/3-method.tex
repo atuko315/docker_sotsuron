@@ -47,6 +47,7 @@ step2と同様に探索の開始地点$s_{start}$からstep3中にたどり着�
     \caption{提案手法のアルゴリズム(part1)}
     \begin{algorithmic}[1]
         \State $t$: 手法を適用する探索木
+        \State $T$: 状態遷移関数
         \State $l$: 盤面の収集を行う手数
         \State $k$: 一度に集める盤面の数
         \State $\zeta(s, s')$: ノード$s$から$s'$までの軌道
@@ -76,8 +77,12 @@ step2と同様に探索の開始地点$s_{start}$からstep3中にたどり着�
            \State $s_{now} \gets T(s, a)$
            
            \State $Z \gets $ empty queue
+            \If{$s$が未探索のノード($N(s)=0$)または終了状態のとき}
+             \Return  $Z$
+            \EndIf
            \State 訪問回数$N(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す
            \For {each $a_i$ in $\alpha$}
+             
              \State $s_{{next}_i} \gets T(s_{now}, a_i)$
              \State $\zeta(s_{now},s_{{next}_i})(={s_{now}, a_i, s_{{next}_i}})$を$Z$の末尾に追加
            \EndFor
@@ -88,6 +93,10 @@ step2と同様に探索の開始地点$s_{start}$からstep3中にたどり着�
            \While {$i < l$}
                 \For {each $\zeta(s_{now}, s_{j})$ in $Z$}
                     \State $\zeta(s_{now}, s_{j})$ を $Z$からポップ
+                    \If{$s$が未探索のノード($N(s)=0$)または終了状態のとき}
+                        \State $\zeta(s_{now}, s_{j})$ を$k$回$Z$の末尾に追加
+                        \State continue
+                    \EndIf
                     \State 訪問回数$N(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す
                     \For {each $a_i$ in $\alpha$}
                         \State $s_{{next}_j} \gets T(s_{j}, a_i)$

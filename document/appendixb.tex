@@ -1,5 +1,102 @@
-\chapter{実験結果詳細}
+\chapter{各種アルゴリズムの詳細}
+\section{比較手法のアルゴリズム}
+比較手法の疑似コードを以下に示す。疑似コード中のTraverse()は第三章の疑似コードと同一である。
+\begin{algorithm}
+    \caption{比較手法のアルゴリズム}
+    \begin{algorithmic}[1]       
+        \State $t$: 手法を適用する探索木
+        \State $T$: 状態遷移関数
+        \State $\zeta(s, s')$: ノード$s$から$s'$までの軌道
+        \Function{CompareAlgorithm}{$s, a$}
+           \State $s_n \gets T(s, a)$
+           \State $\zeta(s, s_n) \gets {s, a, s_n}$
+           \State $\zeta \gets$ \Call{$s_n, \zeta(s, s_n)$}
+           \Retuen $\zeta$
+        \EndFunction
+        
+        \Function {Traverse}{$s, \zeta(s_{start}, s)$}
+            \State $s_{now} \gets s$
+            \State $\zeta_r \gets \zeta(s_{start}, s)$
+            \While {$s_{now}が探索済みかつ終了状態でない$}
+                \State $a_t \gets \textrm{argmax}_a N(s_{now}, a)$
+                \State $s_n \gets T(s_{now}, a_t)$
+                \State $\zeta_r.append({a_t, s_n})$
+            \EndWhile
+            \Return $\zeta_r$
+        \EndFunction
+       
+        
+    \end{algorithmic}
+\end{algorithm}
 
-\section{の予測}
 
-第
+\section{提案手法におけるニューロ補間}
+第四章におけるデータ実験、システム実験ではいずれも手法のニューラルネットワークによる補間を行っている。
+第四章で示した疑似コードでは未探索のノードにたどり着いた際は走査を終了する。ニューラルネットワークによる補間とはこの場合、
+方策$P(s, a)$で訪問回数$N(s, a)$を代用し走査を継続することである。
+以下にニューロ補間を行う場合の疑似コードを示す（変更部分に下線）。
+比較手法に対してニューロ補間を行う場合も同様にTraverse()のコードを変更する。
+\begin{algorithm}
+    \caption{提案手法のアルゴリズム(ニューロ補間あり)}
+    \begin{algorithmic}[1]       
+        \Function{CollectBoards}{$s, a, l, k$}
+           \State $s_{now} \gets T(s, a)$
+           
+           \State $Z \gets $ empty queue
+            \If{$s$が終了状態のとき}
+             \Return  $Z$
+            \EndIf
+            \If{$s$が未探索のとき}
+             \State \underline{方策$P(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す}
+            \Else
+             \State 訪問回数$N(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す
+            \EndIf
+           \For {each $a_i$ in $\alpha$}
+             \State $s_{{next}_i} \gets T(s_{now}, a_i)$
+             \State $\zeta(s_{now},s_{{next}_i})(={s_{now}, a_i, s_{{next}_i}})$を$Z$の末尾に追加
+           \EndFor
+           \If{l=1}
+             \Return $Z$
+           \EndIf
+           \State $i \gets 1$
+           \While {$i < l$}
+                \For {each $\zeta(s_{now}, s_{j})$ in $Z$}
+                    \State $\zeta(s_{now}, s_{j})$ を $Z$からポップ
+                    \If{$s$終了状態のとき}
+                        \State $\zeta(s_{now}, s_{j})$ を$k$回$Z$の末尾に追加
+                        \State continue
+                    \EndIf
+                    \If{$s$が未探索のとき}
+                       \State \underline{方策$P(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す}
+                   \Else
+                    \State 訪問回数$N(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す
+                   \EndIf
+                    
+                    \For {each $a_i$ in $\alpha$}
+                        \State $s_{{next}_j} \gets T(s_{j}, a_i)$
+                        \State $\zeta(s_{now},s_{{next}_i})(=\zeta(s_{now}, s_{j}).append({a_i, s_{{next}_i}}))$を$Z$の末尾に追加
+                    \EndFor
+                    
+                \EndFor     
+           \EndWhile
+           \Return $Z(={\zeta(s_{start}, {s'}_0), ..., \zeta(s_{start}, {s'}_{k^l-1})})$
+        \EndFunction
+        \Function {Traverse}{$s, \zeta(s_{start}, s)$}
+        \State $s_{now} \gets s$
+        \State $\zeta_r \gets \zeta(s_{start}, s)$
+        \While {$s_{now}$が終了状態でない}
+            \If{$s$が未探索のとき}
+                \State \underline{$a_t \gets \textrm{argmax}_a P(s_{now}, a)$}
+            \Else
+                \State $a_t \gets \textrm{argmax}_a N(s_{now}, a)$
+            \EndIf
+            \State $s_n \gets T(s_{now}, a_t)$
+            \State $\zeta_r.append({a_t, s_n})$
+        \EndWhile
+        \Return $\zeta_r$
+        \EndFunction
+       
+        
+    \end{algorithmic}
+\end{algorithm}
+\section{テスト実験における提案手法の変更}
