@@ -20,10 +20,59 @@ timeと$C_{puct}$はいずれも値が大きい程モデルは強くなると考
 \end{table}
 
 \section{対戦結果の詳細}
-2000ゲームのうち1983ゲームは強いAIの勝利となった。
+2000ゲームのうち1983ゲームは強いAI(後番)の勝利となった。
 またゲームごとの手数は75％のゲームが36手以内で終了している。
+以下にゲームの終了手数の累計グラフを示す。
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{./figure/stepCum.png}
+	\caption{終了手数の分布}
+	\label{fig:network}
+\end{figure}
+\section{評価指標の詳細}
+本論文が提案する提案指標(fcount, fdcount)の計算において、盤面の座標は以下のように定められる。
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{./figure/stepCum.png}
+	\caption{終了手数の分布}
+	\label{fig:stepCUm}
+\end{figure}
+ゲーム終了状態には以下のように４つ以上連続してつながっている石の座標$F_s$(fatal stone)とその組み合わせ$F_g$(fatal group)を記録する。
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{./figure/fatalGroup.png}
+	\caption{fatalStoneとfatalGroup}
+	\label{fig:fatalGroup}
+\end{figure}
+fcount, fdcountは実際のゲームにおけるfatal stoneとfatal group(それぞれ$R_s, R_g$とする)とAIの予測によるfatal stoneとfatal group($F_s, F_g$)を比較する指標である。
+どちらも値が高ければ高い程予測の精度が高いことを表す。
+\subsection{fcount}
+fcountはfatal groupの精度を示す二値(0または1)の指標である。
+\begin{equation}
+	{\textrm{fcount} = 1 \textrm{If} F_g \cap R_g = \phi \textrm{Else} 0}
+\end{equation}
+例外として$R_g=\phi$(引き分け)の場合,$F_g$も空集合であるならばfcountは1となる。
+\subsection{fdcount}
+fdcountはfatal stoneの精度を示す。fdcountの値域は[0, 1]である。
+(Count()は集合の要素数を数える関数)
+\begin{equation}
+	{\textrm{fcount} = \frac{\textrm{Count}(F_s \cap R_s)}{4}  }
+\end{equation}
+例外として$R_s=\phi$(引き分け)の場合,$F_s$も空集合であるならばfdcountは1となる。
+\section{データ実験における提案指標の計測}
+
+\begin{enumerate}
+	\item 比較手法: 付録?で述べた決定木の走査によりたどり着いた$F_s, F_g$によってfcount, fdcountを計算した
+	\item 提案手法: 第三章で述べたアルゴリズムによって収集された最終状態の集合$S={s_{edge_0}, s_{edge_1}, ..., s_{edge_{k^l-1}}}$
+	    を指標ごとにグループ化する。
+		\begin{itemize}
+			\item fcount: fatal groupによって$S$をグループ化してできた集合${S_{g_0}, S_{g_1}, ..., S_{g_n}}$($S_{g_i}$は組み合わせ$g_i$がfatal groupとなっている盤面の集合)
+			を要素が多い順に二つ取り出す。抽出された二つの集合${S_{g_{m_1}}, S_{g_{m_2}}}$における${g_{m_1}, g_{m_2}}$で構成される集合を$F_g$とし、fcountを計算した。
+			\item fdcount: fatal stoneによって$S$をグループ化してできた集合${S_0, S_1, ..., S_41}$($S_i$は番号$i$の座標がfatal stoneとなっている盤面の集合)
+			を要素数が多い順に４つ取り出す。抽出された４つの集合${S_{m_1}, S_{m_2}, S_{m_3}, S_{m_4}}$における${m_1, m_2, m_3, m_4}$で構成される集合を$F_s$とし、fdcountを計算した
+		\end{itemize}
+\end{enumerate}
+
+\section{データ実験における実験設定の詳細}
 
 
-
-\section{ヒストリカルデータ}
-為
