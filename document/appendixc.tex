@@ -52,8 +52,9 @@ $Q(s, a)$は以下のように更新される。
 \end{equation}
 
 \newpage
+
 \begin{algorithm}
-    \caption{PV-MCTS in alphazero-baseline (Part 1: Exploration)}
+    \caption{PV-MCTS in alphazero-baseline (変更部分)}
     \begin{algorithmic}[1]
         \State $t$: 決定木
         \State $T$: 遷移関数
@@ -64,31 +65,6 @@ $Q(s, a)$は以下のように更新される。
         \State ニューラルネットワークから出力された方策
         \State $V(s, a)(=V(s_n), s_n=T(s, a))$: 
         \State ニューラルネットワークから出力された局面評価
-        \Function{Explore}{$s_{\text{start}}$}
-            \State Set $s_{now} = s_{start}$ and $a_{now} = a_m$
-            \For {each simulation}
-                \State $\zeta \gets empty list$
-                \State $s_{\text{current}} \gets s_{\text{start}}$
-                \While {$s_{\text{current}}$ がゲームの終了状態でない場合}
-                    \State $a_t \gets TreePolicy(s)$
-                    \State (Tは遷移関数)
-                    \State $(s_{\text{current}}, a_t)$を $\zeta $の末尾に追加
-                    \State $s_{\text{next}} \gets T(s_{\text{current}}, a_t)$
-                    \State $s_{\text{current}} \gets s_{\text{next}}$
-                    
-                \EndWhile
-                \State $G \gets V(s_e)$ 
-                \State($s_e$は$s_{start}$から探索してたどり着いたノード$s_e$)
-                \State \Call{Backpropagate}{$\zeta, G$}
-            \EndFor
-        \EndFunction
-        
-        
-    \end{algorithmic}
-\end{algorithm}
-\begin{algorithm}
-    \caption{PV-MCTS in alphazero-baseline (Part 2: Backpropagation)}
-    \begin{algorithmic}[1]
         \Function{TreePolicy}{$s$}
             \If {$s$が探索されていない子ノードを持つとき}
                 \State $s_c \gets T(s, a)$ ($s_c$は未探索のノード)
@@ -96,7 +72,7 @@ $Q(s, a)$は以下のように更新される。
                 \State \Return $a$
             \Else
                 \State 以下のPUCTスコア$U(s, a)$を計算
-                \State $U(s, a)= C_{\textrm{cpuct}}P(s, a)\frac{\sqrt{N(s)}}{1+N(s, a)}$
+                \State \underline{$U(s, a)= C_{\textrm{cpuct}}P(s, a)\frac{\sqrt{N(s)}}{1+N(s, a)}}$
                 \State $(N(s)=\Gamma N(s, a))$
                 \State 以下のように$a$を求める
                 \State $a = {\textrm{argmax}}_a (Q(s, a)+U(s, a))$
@@ -115,7 +91,7 @@ $Q(s, a)$は以下のように更新される。
             \For {each action $a$ from  $s$}
                 \State $N(s, a) \gets N(s, a)+1$
                 \State $W(s, a) \gets W(s, a)+G$
-                \State $Q(s, a) \gets \frac{N(s, a)Q(s, a)+V(s_c)}{N(s, a)+1}$
+                \State \underline{$Q(s, a) \gets \frac{N(s, a)Q(s, a)+V(s_c)}{N(s, a)+1}}$
 				\State $(s_c = T(s, a))$
             \EndFor
         \EndFunction

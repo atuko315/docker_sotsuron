@@ -21,6 +21,7 @@
                 \State $a_t \gets \textrm{argmax}_a N(s_{now}, a)$
                 \State $s_n \gets T(s_{now}, a_t)$
                 \State $\zeta_r.append({a_t, s_n})$
+                \State $s_{now} \gets s_n$
             \EndWhile
             \Return $\zeta_r$
         \EndFunction
@@ -92,6 +93,7 @@
             \EndIf
             \State $s_n \gets T(s_{now}, a_t)$
             \State $\zeta_r.append({a_t, s_n})$
+            \State $s_{now} \gets s_n$
         \EndWhile
         \Return $\zeta_r$
         \EndFunction
@@ -99,4 +101,36 @@
         
     \end{algorithmic}
 \end{algorithm}
-\section{テスト実験における提案手法の変更}
+\section{システム実験における提案手法の変更}
+システム実験では画面の左下に盤面$s$の訪問回数$N(s)$と局面評価$V(s, a)$を表示する。このとき
+$V(s, a)$の絶対値（どちらのプレイヤーの勝利に近いか）と予想図の勝敗が異なる場合、ユーザーの混乱を招く可能性がある。
+そのため、提案手法では勝敗が$V(s, a)$の絶対値と一致する軌道を表示するように修正を施した。
+システム実験用に修正された疑似コードは以下となる。（下線が変更部分）
+\begin{algorithm}
+    \caption{提案手法のアルゴリズム(ニューロ補間あり)}
+    \begin{algorithmic}[1]       
+        
+        \Function {Traverse}{$s, \zeta(s_{start}, s)$}
+        \state  \underline{$\zeta(s_{start}, s)$から$s_{start}$の次の行動$a$を取り出す}
+        \state \underline{$v \gets V(s, a)$}
+        \State $s_{now} \gets s$
+        \State $\zeta_r \gets \zeta(s_{start}, s)$
+        \While {$s_{now}$が終了状態でない}
+            \If{$s$が未探索のとき}
+                \State \underline{$a_t \gets \textrm{argmax}_a P(s_{now}, a)$}
+            \Else
+                \State $a_t \gets \textrm{argmax}_a N(s_{now}, a)$
+            \EndIf
+            \State $s_n \gets T(s_{now}, a_t)$
+            \State $\zeta_r.append({a_t, s_n})$
+            \State $s_{now} \gets s_n$
+        \EndWhile
+        \If{\underline{$v$と$V(s_{now})$の絶対値が異なるとき}}
+           \Return null
+        \EndIf
+        \Return $\zeta_r$
+        \EndFunction
+       
+        
+    \end{algorithmic}
+\end{algorithm}
