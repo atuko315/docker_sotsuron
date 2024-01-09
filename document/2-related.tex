@@ -137,14 +137,14 @@ step1ではまず、探索の開始地点となるノード$s$を決定する。
                 
             \EndIf
         \EndFunction
-        \Function{Backpropagate}{$\zeta, G$}
+        \Function{InitNode}{$\zeta, G$}
             \For {each node-action pair $(s, a)$ in $\zeta$}
                 \State $N(s, a) \gets 0$
                 \State $W(s, a) \gets 0$
                 \State $Q(s, a) \gets 0$
             \EndFor
         \EndFunction
-        \Function{InitNode}{$s$}
+        \Function{Backpropagate}{$s$}
             \For {each action $a$ from  $s$}
                 \State $N(s, a) \gets N(s, a)+1$
                 \State $W(s, a) \gets W(s, a)+G$

@@ -72,7 +72,7 @@ $Q(s, a)$は以下のように更新される。
                 \State \Return $a$
             \Else
                 \State 以下のPUCTスコア$U(s, a)$を計算
-                \State \underline{$U(s, a)= C_{\textrm{cpuct}}P(s, a)\frac{\sqrt{N(s)}}{1+N(s, a)}}$
+                \State \underline{$U(s, a)= C_{\textrm{cpuct}}P(s, a)\frac{\sqrt{N(s)}}{1+N(s, a)}$}
                 \State $(N(s)=\Gamma N(s, a))$
                 \State 以下のように$a$を求める
                 \State $a = {\textrm{argmax}}_a (Q(s, a)+U(s, a))$
@@ -91,7 +91,7 @@ $Q(s, a)$は以下のように更新される。
             \For {each action $a$ from  $s$}
                 \State $N(s, a) \gets N(s, a)+1$
                 \State $W(s, a) \gets W(s, a)+G$
-                \State \underline{$Q(s, a) \gets \frac{N(s, a)Q(s, a)+V(s_c)}{N(s, a)+1}}$
+                \State \underline{$Q(s, a) \gets \frac{N(s, a)Q(s, a)+V(s_c)}{N(s, a)+1}$}
 				\State $(s_c = T(s, a))$
             \EndFor
         \EndFunction

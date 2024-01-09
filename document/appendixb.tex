@@ -11,7 +11,7 @@
            \State $s_n \gets T(s, a)$
            \State $\zeta(s, s_n) \gets {s, a, s_n}$
            \State $\zeta \gets$ \Call{$s_n, \zeta(s, s_n)$}
-           \Retuen $\zeta$
+           \Return $\zeta$
         \EndFunction
         
         \Function {Traverse}{$s, \zeta(s_{start}, s)$}
@@ -111,8 +111,8 @@ $V(s, a)$の絶対値（どちらのプレイヤーの勝利に近いか）と�
     \begin{algorithmic}[1]       
         
         \Function {Traverse}{$s, \zeta(s_{start}, s)$}
-        \state  \underline{$\zeta(s_{start}, s)$から$s_{start}$の次の行動$a$を取り出す}
-        \state \underline{$v \gets V(s, a)$}
+        \State  \underline{$\zeta(s_{start}, s)$から$s_{start}$の次の行動$a$を取り出す}
+        \State \underline{$v \gets V(s, a)$}
         \State $s_{now} \gets s$
         \State $\zeta_r \gets \zeta(s_{start}, s)$
         \While {$s_{now}$が終了状態でない}
