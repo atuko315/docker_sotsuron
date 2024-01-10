@@ -31,12 +31,7 @@ timeと$C_{puct}$はいずれも値が大きい程モデルは強くなると考
 \end{figure}
 \section{評価指標の詳細}
 本論文が提案する提案指標(fcount, fdcount)の計算において、盤面の座標は以下のように定められる。
-\begin{figure}[t]
-	\centering
-	\includegraphics[width=\linewidth]{./figure/stepCum.png}
-	\caption{終了手数の分布}
-	\label{fig:stepCUm}
-\end{figure}
+
 ゲーム終了状態には以下のように４つ以上連続してつながっている石の座標$F_s$(fatal stoneの集合)とその組み合わせ$F_g$(fatal groupの集合)を記録する。
 下の図の盤面は{17, 18, 19, 20, 24, 31, 38}の7つのfatal stoneと{[17, 18, 19, 20], [17, 24, 31, 38]}の二つのfatal groupを持つ
 \begin{figure}[t]
@@ -50,7 +45,7 @@ fcount, fdcountは実際のゲームにおけるfatal stoneとfatal groupの集�
 \subsection{fcount}
 fcountはfatal groupの精度を示す二値(0または1)の指標である。
 \begin{equation}
-	{\textrm{fcount} = 1 \textrm{If} F_g \cap R_g = \phi \textrm{Else} 0}
+	{\textrm{fcount} = 1 \textrm{If} F_g \cap R_g \ne \phi \textrm{Else} 0}
 \end{equation}
 例外として$R_g=\phi$(引き分け)の場合,$F_g$も空集合であるならばfcountは1となる。
 \subsection{fdcount}
