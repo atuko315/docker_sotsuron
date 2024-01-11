@@ -123,10 +123,94 @@ group countと同様に$F_s$と$R_s$が両方とも空集合である場合stone
 客観評価はグループA(提案手法)の被験者とグループB(比較手法)の被験者の対戦成績である。
 
 \subsection{実験結果}
-予想図で提示される先読みの手数ごとに主観評価の平均値($1\sim5$)を表\ref{table:system-3},\ref{table:system-5}, \ref{table:system-7}, \ref{table:system-100}に示した。
-
-
-
+予想図で提示される先読みの手数ごとに主観評価の平均値($1\sim5$)を表\ref{table:system-3}に示した。
+先読み手数が3手または先読み手数制限なしの場合に、提案手法は比較手法に対して高い結果を示した。
+\begin{table}[H]
+    \caption{先読み手数３手の場合}
+    \scriptsize
+    \centering
+    \resizebox{\linewidth}{!}{
+        \begin{tabular}{c|l||c|c}
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            質問の種類 & 質問の内容 & A & B \\ \hline 
+            (a) & 振り返りによって成長したと感じましたか & \bf{3.29} & 3.17 \\
+            & 振り返りによってAIの意図を掴むことができたと感じますか & 2.43 & \bf{2.67} \\
+            & (二回目のみ) 一回目に比べて成長したと感じますか & 2.75 & \bf{4.33} \\ \hline
+            (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & \bf{3.71} & 3.67 \\
+            & システムにより振り返りが楽しくなったと感じますか & \bf{3.57} & 3.00 \\
+        \end{tabular}
+    }
+    \label{table:system-3}
+\end{table}
+\begin{table}[H]
+    \caption{先読み手数5手の場合}
+    \scriptsize
+    \centering
+    \resizebox{\linewidth}{!}{
+        \begin{tabular}{c|l||c|c}
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            質問の種類 & 質問の内容 & A & B \\ \hline 
+            (a) & 振り返りによって成長したと感じましたか & 3.00 & \bf{4.00} \\
+            & 振り返りによってAIの意図を掴むことができたと感じますか & 2.60 & \bf{4.00} \\
+            & (二回目のみ) 一回目に比べて成長したと感じますか & 3.67 & \bf{4.33} \\ \hline
+            (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & 4.00 & \bf{4.80} \\
+            & システムにより振り返りが楽しくなったと感じますか & 4.20 & \bf{4.60} \\
+        \end{tabular}
+    }
+    \label{table:system-5}
+\end{table}
+\begin{table}[H]
+    \caption{先読み手数7手の場合}
+    \scriptsize
+    \centering
+    \resizebox{\linewidth}{!}{
+        \begin{tabular}{c|l||c|c}
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            質問の種類 & 質問の内容 & A & B \\ \hline 
+            (a) & 振り返りによって成長したと感じましたか & {3.83} & \bf{4.33} \\
+            & 振り返りによってAIの意図を掴むことができたと感じますか & 2.67 & \bf{3.67} \\
+            & (二回目のみ) 一回目に比べて成長したと感じますか & 2.75 & \bf{4.33} \\ \hline
+            (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & 4.17 & \bf{4.67} \\
+            & システムにより振り返りが楽しくなったと感じますか & 3.00 & \bf{3.50} \\
+        \end{tabular}
+    }
+    \label{table:system-7}
+\end{table}
+\begin{table}[H]
+    \caption{先読み手数制限なしの場合}
+    \scriptsize
+    \centering
+    \resizebox{\linewidth}{!}{
+        \begin{tabular}{c|l||c|c}
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            質問の種類 & 質問の内容 & A & B \\ \hline 
+            (a) & 振り返りによって成長したと感じましたか & \bf{4.25} & 4.00 \\
+            & 振り返りによってAIの意図を掴むことができたと感じますか & \bf{3.50} & 3.00 \\
+            & (二回目のみ) 一回目に比べて成長したと感じますか & 2.75 & \bf{4.33} \\ \hline
+            (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & \bf{4.5} & 4.00 \\
+            & システムにより振り返りが楽しくなったと感じますか & \bf{4.75} & 4.40 \\
+        \end{tabular}
+    }
+    \label{table:system-100}
+\end{table}
+また、第二段階である被験者同士の対戦結果は以下となった。
+付録Dに示すように被験者一人に対して二回対戦を行った。結果として示すscoreは勝利を1,敗北を-1,引き分けを0
+とした二回の対戦の平均値として定義される。
+結果は表\ref{table:result-battle}に記載した。提案手法を用いて訓練を行ったグループ(A)は比較手法を用いて訓練を行ったグループ(B)よりも高い
+勝率を記録した。
+\begin{table}[H]
+	\caption{対戦の結果}
+	\centering
+	\scalebox{0.98}[0.98]{
+		\begin{tabular}{c|c}
+			グループ & score \\ \hline
+			A(提案手法)    & \bf{0.25} \\ 
+			B(比較手法)    & -0.15 \\
+		\end{tabular}
+	}
+	\label{table:result-battle}
+\end{table}
+\subsection{考察（システム実験）}
 
 
 
