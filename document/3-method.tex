@@ -7,13 +7,20 @@
     \item 人間のドメイン知識に依存しない
 \end{itemize}
 説明手法を提案する。
-本手法はある状態$s$と行動$a$の組に対してAIが予想する未来図$o(s)$とそこに至るまでの道筋を取り出すことでAIの判断
-の意図を可視化することを目標とする。
+図\ref{fig:mabs}に提案手法のイメージを示している。
+本手法はある状態$s$と行動$a$の組に対してAIが予想する未来図$o(s)$とそこに至るまでの道筋の集合を取り出し、その傾向を見出すことによるAIの判断
+の意図を可視化を目標とする。
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{./figure/mabs.png}
+    \caption{提案手法のイメージ}
+    \label{fig:mabs}
+\end{figure}
 
 
 \section{実装}
 本手法はAlphaZeroシステムのニューラルネットワークと木探索部分のうち、主に木探索の部分を対象に適用される。
-本手法では決定木の判断を説明する際に最も有用な部分を決定木から抽出することを主な目的としており、アルゴリズムは決定木構造を持つ多くのシステムに応用可能である。
+本手法では決定木の判断を説明する際に最も有用な部分を決定木から抽出することを主な目的としており、アルゴリズムはボードゲームAIに留まらず決定木構造を持つ多くのシステムに応用可能である。
 アルゴリズムの流れは以下の通りである。
 図\ref{fig:step1-2}、図\ref{fig:step3-4}はステップごとのアルゴリズムのイメージ図である。
 \begin{enumerate}
@@ -27,35 +34,32 @@
     \end{equation}
     とする。
     \item 以下の流れを$l$ステップ分繰り返す
-    決定木中の注目しているード$s_{now}$における訪問回数$N(s_{now})$中の上位$k$個分の行動${a_0, a_1, ..., a_{k-1}}(a_iはk+1番目に有望な行動とする)$を取り出す。
-    ${s_{next_0}, s_{next_1}, ..., s_{next_{k-1}}}(s_{next_i}=T(s_{now}, a_i), Tは遷移関数)$の各ノードに対してstep2
-    の操作を繰り返す。プログラム上は探索の開始地点$s_{start}$からstep2中にたどり着く各ノード$s_{middle}$までの軌道$\rm{{traj}_{s_middle}}(=[{a'}_{t_0}, {a'}_{t_1}, ..., {a'}_{t_{l-1}}]、 t_iはi番目のステップを表す)$を記録しておく。
+    決定木中の注目しているード$s_{now}$における訪問回数$N(s_{now})$中の上位$k$個分の行動$\{a_1, a_2, ..., a_{k}\}(a_iはk番目に有望な行動とする)$を取り出す。
+    $s_{now}$から行動$\{a_1, a_2, ..., a_{k}\}$を取ることたどり着く各ノード
+    $\{s_{next_1}, s_{next_2}, ..., s_{next_{k}}\}(s_{next_i}=T(s_{now}, a_i), Tは遷移関数)$に対して同様の操作を繰り返す。
+    
     \begin{figure}[t]
         \centering
         \includegraphics[width=\linewidth]{./figure/1-2.png}
         \caption{提案手法のイメージ}
         \label{fig:step1-2}
     \end{figure}
-    \item 集めた$k$の$l$乗個のノード${{s}'_{0}, {s'}_{1}, ..., {s'}_{k^l-1}}$のそれぞれ${s'}_{i}(i=0, 1, ..., k^l-1)$対して以下の操作を再帰的に繰り返す。
+    \item 集めた$k$の$l$乗個のノード$\{{s}'_{1}, {s'}_{2}, ..., {s'}_{k^l}\}$のそれぞれ${s'}_{i}(i=1, 2, ..., k^l)$に対して以下の操作を再帰的に繰り返す。
     ${s'}_{i}$における方策$P({s'}_{i})$中の最も有望な行動$a_{promising}$と${s'}_{next_i}=T({s'}_i, a_{promising})$を記録する。
-    そのようにして記録した${{s'}_{next_0}, {s'}_{next_1}, ..., {s'}_{next_{k^l-1}}}$のそれぞれ${s'}_{next_j}(j=0の, 1, ..., k^l-1)$にも同様の動作を盤面ノードが決定木の端に辿り着くまで行う。
-    step2と同様に探索の開始地点$s_{start}$からstep3中にたどり着く各ノード$s_{middle}$への軌道$\rm{{traj}_{s_middle}}(=[{a'}_{t_0}, {a'}_{t_1}, ..., {a'}_{t_{l-1}}, {a'}_{t_l}, {a'}_{t_{l+1}}, ..., {a'}_{t_p}]、 t_iはi番目のステップを表す)$を記録しておく。
-    \item step3によってたどり着いた$k^l$個のノードによる集合$S={s_{edge_0}, s_{edge_1}, ..., s_{edge_{k^l-1}}}$を任意の共通項$c$によっていくつかの副集合${S_0, S_1, ..., S_q}$に分ける。
+    そのようにして記録した$\{{s'}_{next_1}, {s'}_{next_2}, ..., {s'}_{next_{k^l}}\}$のそれぞれ${s'}_{next_j}(j=1, 2, ..., k^l)$にも同様の操作を盤面ノードが決定木の端に辿り着くまで行う。
+    \item step3によってたどり着いた$k^l$個のノードによる集合$S=\{s_{edge_1}, s_{edge_2}, ..., s_{edge_{k^l}}\}$を任意の共通項$c$によっていくつかの副集合$\{S_1, S_2, ..., S_q\}$に分ける。
     \begin{figure}[t]
         \centering
         \includegraphics[width=\linewidth]{./figure/3-4.png}
         \caption{提案手法のイメージ}
         \label{fig:step3-4}
     \end{figure}
-    \item 共通項で括られた各集合${S_0, S_1, ..., S_q}$のうち、最も要素数が多いもの$S_{max}$中の各要素${s_{e_0}, s_{e_1}, ...,  s_{e_u}}$と各要素に対応する軌道${\rm{{traj}_{s_{e_0}}}, \rm{{traj}_{s_{e_1}}}, ...,  \rm{{traj}_{s_{e_u}}}}$を抽出する。
+    \item 共通項で括られた各集合$\{S_1, S_2, ..., S_q\}$のうち、最も要素数が多いもの$S_{max}$中の各要素$\{s_{e_1}, s_{e_2}, ...,  s_{e_u}\}$と各要素に対応する軌道$\{\rm{{\zeta}_{s_{e_1}}}, \rm{{\zeta}_{s_{e_2}}}, ...,  \rm{{\zeta}_{s_{e_u}}}\}$を抽出する。
 \end{enumerate}
 
 
-
-
-
-このアルゴリズムを要約するとある局面$s$と行動$a$の組み合わせから最も辿り着きやすい結末$O(s, a)$を抽出し、$O(s, a)$に至るまでの複数の道筋を抽出すると表現できる。
-調査を行う者が複数の軌道を観察できることで、
+このアルゴリズムは要約するとある局面$s$と行動$a$の組み合わせから辿り着きやすい結末$O(s, a)$を抽出し、$O(s, a)$に至るまでの複数の道筋を抽出すると表現できる。
+調査を行う者が複数の道筋を観察できることで、
 共通する傾向や法則性を見出せるというメリットが存在する。これは最も可能性が高い一つの分岐を示す、といったような情報が単一である手法には不可能である。
 下に提案手法のイメージと疑似コードを記載する。
 \begin{figure}[t]
@@ -80,15 +84,15 @@
            \State $s_{now}\gets s_{start}$
            \State $a_{now}\gets a$
            \State $Z_0 \gets$\Call{CollectBoards}{$s_{now}, a_{now}, l, k$}
-           \State $(Z_0 ={\zeta(s_{start}, {s'}_0), ..., \zeta(s_{start}, {s'}_{k^l-1})})$
+           \State $(Z_0 =\{\zeta(s_{start}, {s'}_1), ..., \zeta(s_{start}, {s'}_{k^l})\})$
            \State $ Z \gets$ empty list
            \For {each $\zeta(s_{start}, {s'}_i)$ in $Z_0$}
              \State $\zeta(s_{start}, s_{{edge}_i}) \gets$ \Call{Traverse}{${s'}_i, \zeta(s_{start}, {s'}_i)$}
              \State $\zeta(s_{start}, s_{{edge}_i})$を$Z$の末尾に追加
            \EndFor
-           \State 収集された終了状態の集合$S(={s_{edge_0},s_{edge_1}, ..., s_{edge_{k^l-1}}})$を任意の共通項$c$で副集合${S_0, S_1, ..., S_q}$に分割する
-           \State 最も要素数の多い副集合$S_{max}$中の各要素${s_{e_0}, s_{e_1}, ...,  s_{e_u}}$
-           \State に対応する軌道の集合$Z_{max}(=\zeta(s_{start}, s_{e_0}), \zeta(s_{start}, s_{e_1}), ..., \zeta(s_{start}, s_{e_u}))$を保存
+           \State 収集された終了状態の集合$S(=\{s_{edge_1},s_{edge_2}, ..., s_{edge_{k^l}}\})$を任意の共通項$c$で副集合$\{S_1, S_2, ..., S_q\}$に分割する
+           \State 最も要素数の多い副集合$S_{max}$中の各要素$\{s_{e_1}, s_{e_2}, ...,  s_{e_u}\}$
+           \State に対応する軌道の集合$Z_{max}(=\{\zeta(s_{start}, s_{e_1}), \zeta(s_{start}, s_{e_2}), ..., \zeta(s_{start}, s_{e_u})\})$を保存
            \State \Return $Z_{max}$
         \EndFunction
     \end{algorithmic}
@@ -105,11 +109,11 @@
             \If{$s$が未探索のノード($N(s)=0$)または終了状態のとき}
              \Return  $Z$
             \EndIf
-           \State 訪問回数$N(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す
+           \State 訪問回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
            \For {each $a_i$ in $\alpha$}
              
              \State $s_{{next}_i} \gets T(s_{now}, a_i)$
-             \State $\zeta(s_{now},s_{{next}_i})(={s_{now}, a_i, s_{{next}_i}})$を$Z$の末尾に追加
+             \State $\zeta(s_{now},s_{{next}_i})(=\{s_{now}, a_i, s_{{next}_i}\})$を$Z$の末尾に追加
            \EndFor
            \If{l=1}
              \Return $Z$
@@ -122,7 +126,7 @@
                         \State $\zeta(s_{now}, s_{j})$ を$k$回$Z$の末尾に追加
                         \State continue
                     \EndIf
-                    \State 訪問回数$N(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す
+                    \State 訪問回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
                     \For {each $a_i$ in $\alpha$}
                         \State $s_{{next}_j} \gets T(s_{j}, a_i)$
                         \State $\zeta(s_{now},s_{{next}_i})(=\zeta(s_{now}, s_{j}).append({a_i, s_{{next}_i}}))$を$Z$の末尾に追加
@@ -130,7 +134,7 @@
                     
                 \EndFor     
            \EndWhile
-           \Return $Z(={\zeta(s_{start}, {s'}_0), ..., \zeta(s_{start}, {s'}_{k^l-1})})$
+           \Return $Z(=\{\zeta(s_{start}, {s'}_1), ..., \zeta(s_{start}, {s'}_{k^l})\})$
         \EndFunction
         \Function {Traverse}{$s, \zeta(s_{start}, s)$}
         \State $s_{now} \gets s$
@@ -151,14 +155,14 @@
 
 
 
-次章で示すようにconnect4タスクにおいて収集される軌道の集合においては末端部分のいくつかの選択が共通している傾向が確認された。
+付録Aで示すようにconnect4タスクにおいて収集される軌道の集合においては末端部分のいくつかの選択が共通している傾向が確認された。
 そのため状態と行動の組$(s, a)$から$O(s, a)$という結果を予測する過程で$O(s, a)$から末尾の数手を取り除いた版面$d$にたどり着く傾向の発見などの知識獲得が記載される。
 \section{importance}
 前章で述べたように、エピソード中の各状態$s$の重要度$I(s)$の定義を以下のように定めた。
 \begin{equation}
 	{I(s)=V[Q'] (Q'=[\rm{max}Q(s, a), \rm{secondMax}Q(s, a), ..., \rm{thirdQuantile}Q(s, a)])}
 \end{equation}
-つまり、現在の状態$s$に対する行動の集合$A(={a_0, a_1, ..., a_N})$とした際の行動価値関数の集合${Q(s, a_0), Q(s, a_1), ..., Q(s, a_N)}$のうち大きさが上位75
+つまり、現在の状態$s$に対する行動の集合$A(={a_0, a_1, ..., a_N})$とした際の行動価値関数の集合${Q(s, a_0), Q(s, a_1), ..., Q(s, a_N)}$のうち値の大きさが上位75
 \%の成分で構成される集合の分散として重要度$I(s)$を定義する。
 これは次の一手で辿り着きうる収益の予想の揺らぎの幅を意味しており、先述した盤面の対称性や悪い選択肢の影響が大きくなる可能性の軽減が期待できる。
 

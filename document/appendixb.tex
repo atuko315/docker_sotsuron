@@ -9,7 +9,7 @@
         \State $\zeta(s, s')$: ノード$s$から$s'$までの軌道
         \Function{CompareAlgorithm}{$s, a$}
            \State $s_n \gets T(s, a)$
-           \State $\zeta(s, s_n) \gets {s, a, s_n}$
+           \State $\zeta(s, s_n) \gets \{s, a, s_n\}$
            \State $\zeta \gets$ \Call{$s_n, \zeta(s, s_n)$}
            \Return $\zeta$
         \EndFunction
@@ -38,23 +38,23 @@
 以下にニューロ補間を行う場合の疑似コードを示す（変更部分に下線）。
 比較手法に対してニューロ補間を行う場合も同様にTraverse()のコードを変更する。
 \begin{algorithm}
-    \caption{提案手法のアルゴリズム(ニューロ補間あり)}
+    \caption{提案手法のアルゴリズム(ニューロ補間あり)part1}
+    \small
     \begin{algorithmic}[1]       
         \Function{CollectBoards}{$s, a, l, k$}
            \State $s_{now} \gets T(s, a)$
-           
            \State $Z \gets $ empty queue
             \If{$s$が終了状態のとき}
              \Return  $Z$
             \EndIf
             \If{$s$が未探索のとき}
-             \State \underline{方策$P(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す}
+             \State \underline{方策$P(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す}
             \Else
-             \State 訪問回数$N(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す
+             \State 訪問回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
             \EndIf
            \For {each $a_i$ in $\alpha$}
              \State $s_{{next}_i} \gets T(s_{now}, a_i)$
-             \State $\zeta(s_{now},s_{{next}_i})(={s_{now}, a_i, s_{{next}_i}})$を$Z$の末尾に追加
+             \State $\zeta(s_{now},s_{{next}_i})(=\{s_{now}, a_i, s_{{next}_i}\})$を$Z$の末尾に追加
            \EndFor
            \If{l=1}
              \Return $Z$
@@ -68,9 +68,9 @@
                         \State continue
                     \EndIf
                     \If{$s$が未探索のとき}
-                       \State \underline{方策$P(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す}
+                       \State \underline{方策$P(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す}
                    \Else
-                    \State 訪問回数$N(s)$から上位$k$の行動${a_0, a_1, ..., a_{k-1}}(=\alpha)$を取り出す
+                    \State 訪問回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
                    \EndIf
                     
                     \For {each $a_i$ in $\alpha$}
@@ -80,8 +80,13 @@
                     
                 \EndFor     
            \EndWhile
-           \Return $Z(={\zeta(s_{start}, {s'}_0), ..., \zeta(s_{start}, {s'}_{k^l-1})})$
+           \Return $Z(=\{\zeta(s_{start}, {s'}_1), ..., \zeta(s_{start}, {s'}_{k^l})\})$
         \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+\begin{algorithm}
+    \caption{提案手法のアルゴリズム(ニューロ補間あり)part2}
+    \begin{algorithmic}[1] 
         \Function {Traverse}{$s, \zeta(s_{start}, s)$}
         \State $s_{now} \gets s$
         \State $\zeta_r \gets \zeta(s_{start}, s)$
@@ -105,9 +110,13 @@
 システム実験では画面の左下に盤面$s$の訪問回数$N(s)$と局面評価$V(s, a)$を表示する。このとき
 $V(s, a)$の絶対値（どちらのプレイヤーの勝利に近いか）と予想図の勝敗が異なる場合、ユーザーの混乱を招く可能性がある。
 そのため、提案手法では勝敗が$V(s, a)$の絶対値と一致する軌道を表示するように修正を施した。
-システム実験用に修正された疑似コードは以下となる。（下線が変更部分）
+システム実験用に修正された疑似コードはAlgorithm:\ref{alg:system}となる。（下線が変更部分）
+また、提案手法により収集した最終盤面$S=\{s_{edge_1}, s_{edge_2}, ..., s_{edge_{k^l}}\}$は
+最終的に４つ以上連続してつながっている石の組み合わせ(fatal group)でグループ化し、最も要素数が多い集合の道筋をユーザーに提示した。
+
 \begin{algorithm}
-    \caption{提案手法のアルゴリズム(ニューロ補間あり)}
+    \caption{提案手法のアルゴリズム(システム実験)}
+    \label{alg:system}
     \begin{algorithmic}[1]       
         
         \Function {Traverse}{$s, \zeta(s_{start}, s)$}

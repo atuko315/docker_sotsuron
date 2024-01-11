@@ -50,7 +50,7 @@ AlphaGo\cite{AlphaGo}やStockFish\cite{StockFish}、DeepLearningShogi\cite{dlsho
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/symbolic.png}
-	\caption{ボードゲームにおける強化学習モデル}
+	\caption{connect4盤面の状態表現}
 	\label{fig:connect4-symbol}
 \end{figure}
 また、後述するconnect4のルール上の制約により次にプレイヤーが打つ箇所(行動)は列の数と同数の7種類に限定される。
@@ -75,7 +75,7 @@ PV-モンテカルロ木探索ではニューラルネットワークから得�
 によって改善する。
 PV-モンテカルロ木探索ではシミュレーションによって$s$または$(s, a)$(状態と行動の組)をノード、各行動$a$を枝とした決定木を構築する。
 最終的に各ノード$s$から派生する各行動$\left\{a_1, a_2, ..., a_n\right\}$の探索回数の分布$N(s)(={N(s, a_1), N(s, a_2), ..., N(s, a_n)})$が改善された方策となる。
-一方、局面評価もまたモンテカルロ木探索により決定木が拡張されるなかで更新される。\ref{alg:mcts-1}\ref{alg:mcts-2}に決定木と局面評価$V(s)$の詳細な更新アルゴリズムを示し、ここでは大まかな流れを示す。。
+一方、局面評価もまたモンテカルロ木探索により決定木が拡張されるなかで更新される。Algorithm\ref{alg:mcts-1}\ref{alg:mcts-2}に決定木と局面評価$V(s)$の詳細な更新アルゴリズムを示し、ここでは大まかな流れを示す。
 PV-MCTSのアルゴリズムの流れは以下である。
 \begin{enumerate}
     \item まず、探索の開始地点となるノード$s$を決定する。
@@ -189,11 +189,11 @@ StockFish\cite{StockFish}やDeepLearningShogi\cite{dlshogi}(dlshogiはNNを使�
 XAIとはexplainable AI(説明可能AI)の略語であり、AIを人間に対して説明可能なものにする、もしくは説明可能なAIを構築する領域である。(参考文献追加)
 本論文はAIの判断根拠として先読みを示す意味でXAIの分野に属する研究であると言える。
 ここでの「説明可能性」の語は「人間に理解できる形での説明を与える能力」\cite{definition}と定義され、
-\begin{enumerate}
+\begin{itemize}
     \item いつ
     \item どのような
     \item どのように
-\end{enumerate}
+\end{itemize}
 説明を与えるかによってさらに細かく分類される。
 「いつ」、つまりどの時点で説明を与えるか、に関しては既存のネットワークに対して新たに説明を加える「事後的」説明と初めから動作の根拠を示せるようにネットワークやシステムを構築する「事前的」説明
 に分類できる\cite{definition}。
@@ -222,6 +222,9 @@ Jacoviらの\cite{contrastive}では自然言語処理の分類タスクにお�
 Mishraらの\cite{whyNot}では医療タスクにおけるニューラルネットワークの判断を決定木に近似した上でAIの判断$a$から派生する予想と別の判断$b$から派生する予想を提示する形でAIによる判断の妥当性を示している。
 を実装している。（ロボット追加）
 また、Gajcinらの\cite{preference}では異なるモデルの挙動の違いをユーザーに示す目的でcontrastive explanationが用いられている。
+これらの強化学習・木構造ネットワークに対するconstrative explanationの手法は決定木上の「最も可能性が高い」「単一の」予想図を用いることを前提としている。
+そのため第三章でしめす提案手法では決定木上の複数の予想図を用いたconstrative explanationの実現を試みた。
+図\ref{fig:contrasitive}に決定木ネットワークにおけるcontrasitive explanationのイメージを示している。
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/contrastive.png}
@@ -230,8 +233,23 @@ Mishraらの\cite{whyNot}では医療タスクにおけるニューラルネッ�
 \end{figure}
 \subsection{importance}
 ゲームやタスクにおいて勝負の分かれ目となりうる場面や、ミスをしやすい場面、危険な事故が起きやすい場面を特定することは非常に有用である。また、このようなAIモデルが他の場面よりも重要度が高いと判断する状況を収集することは、モデルの挙動に対する効率的な調査を可能にする。
-Torrayら\cite{imp2013}やAmirら\cite{imp2016}は一つ先の行動価値関数$Q(s, a)$が次の選択によって大きく左右されるような状態を重要度の高い局面として定義している。
-しかし、このような定義はimpが$Q(s, a)$の値が低くなるような行動$a$に大きく影響されるリスクや第三章で述べるように状態に対称性があるような場合に適切な判断が阻害されるリスクがある。
+Torrayら\cite{imp2013}やAmirら\cite{imp2016}は状態の重要度$I(s)$を一つ先の行動価値関数$Q(s, a)$が次の選択によって大きく左右されるような状態を重要度の高い局面として定義している。
+$Q(s, a)$の揺らぎの捉え方にはいくつかの方式が存在し、
+Torrayらは$I(s)$を$s$から辿り着きうる最善の$Q(s, a)$と最悪の$Q(s, a)$の差として定義している。
+\begin{equation}
+	{I(s)= \textrm(max)Q(s, a)-\textrm(worst)Q(s, a)}
+\end{equation}
+Amirらは$I(s)$を$s$から辿り着きうる最善の$Q(s, a)$と二番目に値の大きい$Q(s, a)$の差として定義している。
+\begin{equation}
+	{I(s)= \textrm(max)Q(s, a)-\textrm(secondMax)Q(s, a)}
+\end{equation}
+しかし、これらの定義はimpが$Q(s, a)$の値が低くなるような行動$a$に大きく影響されるリスクや図\ref{fig:symmetry}のように状態に対称性があるような場合に適切な判断が阻害されるリスクがある。
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{./figure/symmetry.png}
+	\caption{ボードゲームにおける強化学習モデル}
+	\label{fig:symmetry}
+\end{figure}
 Guoら\cite{EDGE}は重要度$I$を収益$G$が確定するまでの一連の流れ（エピソード）やエピソード内の時点$t$の重要度を収益$G$との関連度の大きさから多角的に定めている。
 しかし、Guoらの定義は状態の符号化や回帰などのデータの加工段階が多く、指標自体の説明性に疑問が残る。AIモデルに対して説明を加える際にはその手法自体もなるべく簡明である方が望ましいと考えられる。
 
@@ -243,6 +261,6 @@ Guoら\cite{EDGE}は重要度$I$を収益$G$が確定するまでの一連の流
 本論文は高度なAIの動作を人間に理解させることを目標としており、学習支援の側面を含んでいると言える。
 既存のAIを用いたボードゲーム学習支援システムとしては先述のLeeら\cite{ChessComments}やオンラインサービスであるDecodeChess\cite{DecodeChess}などによる解説文自動生成や、Richard\cite{badMoves2016}らやRichard\cite{badMoves2017}らの人間側の悪手を自動的に検知しその理由を個別に指摘するモデルが提案されている。
 しかし「ボードゲームに対するXAI」の段での内容と同様にその多くがゲームのドメイン知識に依存しており、指導の内容も人間の知識に依存したものになってしまうという欠点がある。
-
+(参考文献追加)
 
 
