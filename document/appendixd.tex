@@ -92,7 +92,7 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
 
 
 \section{質問項目の詳細}
-質問項目は「タスクの熟達度に関連する質問」と「タスクの楽しさ・面白さに関連する質問」の二つに分けられる。
+質問項目は「タスクの熟達度に関連する質問」((a))と「タスクの楽しさ・面白さに関連する質問」((b))の二つに分けられる。
 具体的な質問項目は\ref{table:query}に記載した。また、二日目は「タスクの楽しさ・面白さに関連する質問」に
 「一回目と比べて成長したと感じますか」を追加した。
 \begin{table}[H]
@@ -109,6 +109,99 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
     \end{tabular}
     \label{table:query}
 \end{table}
+\section{結果データ}
+第四章では先読みの手数ごとに結果データを集計した。ここでは他の観点から集計されたデータを示す。
+表\ref{table:system-all}に先読みの手数を分けずに合計した結果を示す。
+\begin{table}[H]
+    \caption{結果:総合}
+    \scriptsize
+    \centering
+    \resizebox{\linewidth}{!}{
+        \begin{tabular}{c|l||c|c}
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            質問の種類 & 質問の内容 & A & B \\ \hline 
+            (a) & 振り返りによって成長したと感じましたか & 3.55 & \bf{3.86} \\
+            & 振り返りによってAIの意図を掴むことができたと感じますか & 2.73 & \bf{3.32} \\
+            & (二回目のみ) 一回目に比べて成長したと感じますか & 3.36 & \bf{4.00} \\ \hline
+            (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & 4.05 & \bf{4.27} \\
+            & システムにより振り返りが楽しくなったと感じますか & 3.86 & \bf{4.33} \\
+        \end{tabular}
+    }
+    \label{table:system-all}
+\end{table}
 
+また、AIの強さごとに集計した結果は以下である。
+表\ref{table:system-strong}に強いAIを用いて訓練した被験者のデータ、表\ref{table:system-weak}に
+弱いAIを用いて訓練した被験者のデータを示す。
+\begin{table}[H]
+    \caption{結果:AIの強さ(強い)}
+    \scriptsize
+    \centering
+    \resizebox{\linewidth}{!}{
+        \begin{tabular}{c|l||c|c}
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            質問の種類 & 質問の内容 & A & B \\ \hline 
+            (a) & 振り返りによって成長したと感じましたか & 3.67 & \bf{3.82} \\
+            & 振り返りによってAIの意図を掴むことができたと感じますか & 2.58 & \bf{3.55} \\
+            & (二回目のみ) 一回目に比べて成長したと感じますか & 3.00 & \bf{4.00} \\ \hline
+            (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & 4.08 & \bf{4.64} \\
+            & システムにより振り返りが楽しくなったと感じますか & 3.75 & \bf{4.50} \\
+        \end{tabular}
+    }
+    \label{table:system-strong}
+\end{table}
+
+\begin{table}[H]
+    \caption{結果:AIの強さ(弱い)}
+    \scriptsize
+    \centering
+    \resizebox{\linewidth}{!}{
+        \begin{tabular}{c|l||c|c}
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            質問の種類 & 質問の内容 & A & B \\ \hline 
+            (a) & 振り返りによって成長したと感じましたか & 3.8 & \bf{3.33} \\
+            & 振り返りによってAIの意図を掴むことができたと感じますか & 3.00 & 3.00 \\
+            & (二回目のみ) 一回目に比べて成長したと感じますか & 3.80 & \bf{4.00} \\ \hline
+            (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & \bf{4.00} & 3.80 \\
+            & システムにより振り返りが楽しくなったと感じますか & 4 & \bf{4.1} \\
+        \end{tabular}
+    }
+    \label{table:system-weak}
+\end{table}
+また、一日目のデータを表\ref{table:data-day1}、二日目のデータを表\ref{table:data-day2}に記載する。
+\begin{table}[H]
+    \caption{結果:一日目}
+    \scriptsize
+    \centering
+    \resizebox{\linewidth}{!}{
+        \begin{tabular}{c|l||c|c}
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            質問の種類 & 質問の内容 & A & B \\ \hline 
+            (a) & 振り返りによって成長したと感じましたか & 3.56 & \bf{3.78} \\
+            & 振り返りによってAIの意図を掴むことができたと感じますか & \bf{3.05} & 2.94 \\ \hline
+            (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & 4.06 & \bf{4.28} \\
+            & システムにより振り返りが楽しくなったと感じますか & 4.06 & \bf{4.28} \\
+        \end{tabular}
+    }
+    \label{table:system-day1}
+\end{table}
+
+\begin{table}[H]
+    \caption{結果:二日目}
+    \scriptsize
+    \centering
+    \resizebox{\linewidth}{!}{
+        \begin{tabular}{c|l||c|c}
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            質問の種類 & 質問の内容 & A & B \\ \hline 
+            (a) & 振り返りによって成長したと感じましたか & 3.55 & \bf{3.91} \\
+            & 振り返りによってAIの意図を掴むことができたと感じますか & 2.45 & \bf{3.64} \\ 
+			& (二回目のみ) 一回目に比べて成長したと感じますか & 3.36 & \bf{4.00} \\ \hline
+            (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & 4.00 & 4.18 \\
+            & システムにより振り返りが楽しくなったと感じますか & 3.91 & \bf{4.40} \\
+        \end{tabular}
+    }
+    \label{table:system-day2}
+\end{table}
 
 
