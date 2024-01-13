@@ -35,12 +35,12 @@ alphazero\_baselinモデル同士の対戦データ2000局分(盤面数:61049)�
 
 \subsection{比較手法}
 提案手法と比較手法はそれぞれ以下の方式で予測を行う。
-比較手法の詳細なアルゴリズムは付録Bに記載した。
+比較手法の詳細なアルゴリズムは付録\ref{chap:alg}に記載した。
 \begin{itemize}
 	\item 比較手法: 探索の開始地点から最も訪問回数が大きい選択肢を選び、決定木の端までたどり着いた際にそこで四つ繋がっている石の組み合わせ、位置を記録する。
 	\item 提案手法: 集めた盤面における4つ繋がっている石を集計し、出現頻度が高い4つの個別の石の位置と出現頻度が高い二つの組み合わせを記録する。組み合わせを二つ記録する理由は下の図のように最終的に繋がっている組み合わせが二つある可能性を考慮するためである。
 \end{itemize}
-図\ref{fig:compare}は比較手法の直感的なイメージを示している。
+図\ref{fig:compare}は比較手法の概要を示している。
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/compare.png}
@@ -49,23 +49,24 @@ alphazero\_baselinモデル同士の対戦データ2000局分(盤面数:61049)�
 \end{figure}
 
 \subsection{評価指標}
-両手法による予測の精度を独自に定義した二つの定義group count($C_g$)、stone count($C_s$)によって計測した。stone count, group countの詳細な定義は付録Aに記載した。
+両手法による予測の精度を独自に定義した二つの定義group count($C_g$)、stone count($C_s$)によって計測した。stone count、 group countの詳細な定義は付録Aに記載する。
 どちらも最終盤面において4つ以上連続して並ぶ石と組み合わせ(以下fatal stone、fatal groupと記載)の座標に対する予測精度を表している。
 ここでは概略を述べる。
 手法によって予測されたfatal stone、fatal groupの座標をそれぞれ$F_s, F_g$とする。
-\paragraph{group count}
-予測の石の組み合わせ単位での精度を示しており、
+
+\paragraph{group count}~
+\par 予測の石の組み合わせ単位での精度を示しており、
 手法による予測$F_g$と実際のfatal groupの集合$R_g$に共通する要素がある場合1、無い場合は1となる。
 また、$F_g$と$R_g$が両方とも空集合$\phi$である場合(実際の結果が引き分けでありかつそれを正しく予測できている場合)group countは1となる。
-\paragraph{stone count}
-予測の個別の石単位での精度を表しており、
+\paragraph{stone count}~
+\par 予測の個別の石単位での精度を表しており、
 手法による予測$F_s$と実際の集合$R_s$の共通する要素の数を4で割った値である。値の最大値は1であり、先述の値が1を超える場合もstone countは1として扱う。
 group countと同様に$F_s$と$R_s$が両方とも空集合である場合stone countは1となる。
 \subsection{実験結果}
 
 
-表\ref{table:result-online}に実験結果を示した。いずれの場合もgroup countにおいて提案手法は比較手法より高い値を示した。
-表中に記載した「補間」の詳細は付録Bに記載した。
+表\ref{table:result-online}に実験結果を示す。いずれの場合もgroup countにおいて提案手法は比較手法より高い値を示した。
+表中に記載した「補間」の詳細は付録\ref{chap:alg}に記載する。
 \begin{table}[H]
 	\caption{実験結果:データ実験}
 	\centering
@@ -94,8 +95,8 @@ group countと同様に$F_s$と$R_s$が両方とも空集合である場合stone
 \subsection{実験手順}
 実験は被験者一人あたりにつき三回行われ、前半二回を第一段階（提案手法による学習）、後半一回が第二段階（被験者同士の対戦）とした。
 ここでは第一段階である提案手法の学習について述べる。
-\paragraph{第一段階（提案手法による学習）}
-提案システムを用いた学習はさらに
+\paragraph{第一段階(提案手法による学習)}~
+\par 提案システムを用いた学習はさらに
 \begin{itemize}
 	\item AIシステム(alphazero\_baseline)との対戦
 	\item 提案手法によるゲームの振り返り
@@ -123,7 +124,7 @@ group countと同様に$F_s$と$R_s$が両方とも空集合である場合stone
 客観評価はグループA(提案手法)の被験者とグループB(比較手法)の被験者の対戦成績である。
 
 \subsection{実験結果}
-予想図で提示される先読みの手数ごとに主観評価の平均値($1\sim5$)を表\ref{table:system-3}に示した。
+予想図で提示される先読みの手数ごとに主観評価の平均値($1\sim5$)を表\ref{table:system-3}に示す。
 先読み手数が3手または先読み手数制限なしの場合に、提案手法は比較手法に対して高い結果を示した。
 \begin{table}[H]
     \caption{先読み手数３手の場合}
@@ -196,7 +197,7 @@ group countと同様に$F_s$と$R_s$が両方とも空集合である場合stone
 また、第二段階である被験者同士の対戦結果は以下となった。
 付録Dに示すように被験者一人に対して二回対戦を行った。結果として示すscoreは勝利を1,敗北を-1,引き分けを0
 とした二回の対戦の平均値として定義される。
-結果は表\ref{table:result-battle}に記載した。提案手法を用いて訓練を行ったグループ(A)は比較手法を用いて訓練を行ったグループ(B)よりも高い
+結果は表\ref{table:result-battle}に記載する。提案手法を用いて訓練を行ったグループ(A)は比較手法を用いて訓練を行ったグループ(B)よりも高い
 勝率を記録した。
 \begin{table}[H]
 	\caption{対戦の結果}

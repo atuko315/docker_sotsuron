@@ -7,18 +7,18 @@
     \item 人間のドメイン知識に依存しない
 \end{itemize}
 説明手法を提案する。
-図\ref{fig:mabs}に提案手法のイメージを示している。
+図\ref{fig:mabs}に提案手法の概要を示している。
 本手法はある状態$s$と行動$a$の組に対してAIが予想する未来図$o(s)$とそこに至るまでの道筋の集合を取り出し、その傾向を見出すことによるAIの判断
 の意図を可視化を目標とする。
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{./figure/mabs.png}
-    \caption{提案手法のイメージ}
+    \caption{提案手法の概要}
     \label{fig:mabs}
 \end{figure}
 
 
-\section{実装}
+\section{提案手法のアルゴリズム}
 本手法はAlphaZeroシステムのニューラルネットワークと木探索部分のうち、主に木探索の部分を対象に適用される。
 本手法では決定木の判断を説明する際に最も有用な部分を決定木から抽出することを主な目的としており、アルゴリズムはボードゲームAIに留まらず決定木構造を持つ多くのシステムに応用可能である。
 アルゴリズムの流れは以下の通りである。
@@ -33,124 +33,43 @@
         {a_{now}=a}
     \end{equation}
     とする。
-    \item 以下の流れを$l$ステップ分繰り返す
-    決定木中の注目しているード$s_{now}$における訪問回数$N(s_{now})$中の上位$k$個分の行動$\{a_1, a_2, ..., a_{k}\}(a_iはk番目に有望な行動とする)$を取り出す。
-    $s_{now}$から行動$\{a_1, a_2, ..., a_{k}\}$を取ることたどり着く各ノード
+    \item 以下の流れを$l$ステップ分繰り返す。\\
+    決定木中の注目しているノード$s_{now}$における訪問回数$N(s_{now})$中の上位$k$個分の行動$\{a_1, a_2, ..., a_{k}\}(a_iはk番目に有望な行動とする)$を取り出す。
+    $s_{now}$から行動$\{a_1, a_2, ..., a_{k}\}$を取ることでたどり着く各ノード
     $\{s_{next_1}, s_{next_2}, ..., s_{next_{k}}\}(s_{next_i}=T(s_{now}, a_i), Tは遷移関数)$に対して同様の操作を繰り返す。
     
-    \begin{figure}[t]
-        \centering
-        \includegraphics[width=\linewidth]{./figure/1-2.png}
-        \caption{提案手法のイメージ}
-        \label{fig:step1-2}
-    \end{figure}
+    
     \item 集めた$k$の$l$乗個のノード$\{{s}'_{1}, {s'}_{2}, ..., {s'}_{k^l}\}$のそれぞれ${s'}_{i}(i=1, 2, ..., k^l)$に対して以下の操作を再帰的に繰り返す。
     ${s'}_{i}$における方策$P({s'}_{i})$中の最も有望な行動$a_{promising}$と${s'}_{next_i}=T({s'}_i, a_{promising})$を記録する。
     そのようにして記録した$\{{s'}_{next_1}, {s'}_{next_2}, ..., {s'}_{next_{k^l}}\}$のそれぞれ${s'}_{next_j}(j=1, 2, ..., k^l)$にも同様の操作を盤面ノードが決定木の端に辿り着くまで行う。
     \item step3によってたどり着いた$k^l$個のノードによる集合$S=\{s_{edge_1}, s_{edge_2}, ..., s_{edge_{k^l}}\}$を任意の共通項$c$によっていくつかの副集合$\{S_1, S_2, ..., S_q\}$に分ける。
-    \begin{figure}[t]
-        \centering
-        \includegraphics[width=\linewidth]{./figure/3-4.png}
-        \caption{提案手法のイメージ}
-        \label{fig:step3-4}
-    \end{figure}
     \item 共通項で括られた各集合$\{S_1, S_2, ..., S_q\}$のうち、最も要素数が多いもの$S_{max}$中の各要素$\{s_{e_1}, s_{e_2}, ...,  s_{e_u}\}$と各要素に対応する軌道$\{\rm{{\zeta}_{s_{e_1}}}, \rm{{\zeta}_{s_{e_2}}}, ...,  \rm{{\zeta}_{s_{e_u}}}\}$を抽出する。
 \end{enumerate}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{./figure/1-2.png}
+    \caption{提案アルゴリズムの概要(step1$\sim$ 2)}
+    \label{fig:step1-2}
+\end{figure}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{./figure/3-4.png}
+    \caption{提案アルゴリズムの概要(step3$\sim $4)}
+    \label{fig:step3-4}
+\end{figure}
 
-
-このアルゴリズムは要約するとある局面$s$と行動$a$の組み合わせから辿り着きやすい結末$O(s, a)$を抽出し、$O(s, a)$に至るまでの複数の道筋を抽出すると表現できる。
+このアルゴリズムを要約すると、図\ref{fig:merit}のようにある局面$s$と行動$a$の組み合わせから辿り着きやすい結末$O(s, a)$を抽出し、$O(s, a)$に至るまでの複数の道筋を抽出すると表現できる。
 調査を行う者が複数の道筋を観察できることで、
-共通する傾向や法則性を見出せるというメリットが存在する。これは最も可能性が高い一つの分岐を示す、といったような情報が単一である手法には不可能である。
-下に提案手法のイメージと疑似コードを記載する。
+共通する傾向や法則性を見出せるというメリットが存在する。これは第2章で述べたような最も可能性が高い一つの分岐を示す、といったような情報が単一である従来の手法には不可能である。
+提案手法の疑似コードは付録\ref{chap:alg}
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/merit.png}
-	\caption{提案手法のイメージ}
+	\caption{提案手法と既存手法}
 	\label{fig:merit}
 \end{figure}
-\newpage
-\begin{algorithm}
-    \label{alg:myalg-1}
-    \caption{提案手法のアルゴリズム(part1)}
-    \begin{algorithmic}[1]
-        \State $t$: 手法を適用する探索木
-        \State $T$: 状態遷移関数
-        \State $l$: 盤面の収集を行う手数
-        \State $k$: 一度に集める盤面の数
-        \State $\zeta(s, s')$: ノード$s$から$s'$までの軌道
-        
-       
-        \Function{MyAlgorithm}{$s_{start}, a, l, k$}
-           \State $s_{now}\gets s_{start}$
-           \State $a_{now}\gets a$
-           \State $Z_0 \gets$\Call{CollectBoards}{$s_{now}, a_{now}, l, k$}
-           \State $(Z_0 =\{\zeta(s_{start}, {s'}_1), ..., \zeta(s_{start}, {s'}_{k^l})\})$
-           \State $ Z \gets$ empty list
-           \For {each $\zeta(s_{start}, {s'}_i)$ in $Z_0$}
-             \State $\zeta(s_{start}, s_{{edge}_i}) \gets$ \Call{Traverse}{${s'}_i, \zeta(s_{start}, {s'}_i)$}
-             \State $\zeta(s_{start}, s_{{edge}_i})$を$Z$の末尾に追加
-           \EndFor
-           \State 収集された終了状態の集合$S(=\{s_{edge_1},s_{edge_2}, ..., s_{edge_{k^l}}\})$を任意の共通項$c$で副集合$\{S_1, S_2, ..., S_q\}$に分割する
-           \State 最も要素数の多い副集合$S_{max}$中の各要素$\{s_{e_1}, s_{e_2}, ...,  s_{e_u}\}$
-           \State に対応する軌道の集合$Z_{max}(=\{\zeta(s_{start}, s_{e_1}), \zeta(s_{start}, s_{e_2}), ..., \zeta(s_{start}, s_{e_u})\})$を保存
-           \State \Return $Z_{max}$
-        \EndFunction
-    \end{algorithmic}
-\end{algorithm}
-\begin{algorithm}
-    \label{alg:myalg-2}
-    \caption{提案手法のアルゴリズム(part2)}
-    \begin{algorithmic}[1]    
-    \scriptsize   
-        \Function{CollectBoards}{$s, a, l, k$}
-           \State $s_{now} \gets T(s, a)$
-           
-           \State $Z \gets $ empty queue
-            \If{$s$が未探索のノード($N(s)=0$)または終了状態のとき}
-             \Return  $Z$
-            \EndIf
-           \State 訪問回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
-           \For {each $a_i$ in $\alpha$}
-             
-             \State $s_{{next}_i} \gets T(s_{now}, a_i)$
-             \State $\zeta(s_{now},s_{{next}_i})(=\{s_{now}, a_i, s_{{next}_i}\})$を$Z$の末尾に追加
-           \EndFor
-           \If{l=1}
-             \Return $Z$
-           \EndIf
-           \State $i \gets 1$
-           \While {$i < l$}
-                \For {each $\zeta(s_{now}, s_{j})$ in $Z$}
-                    \State $\zeta(s_{now}, s_{j})$ を $Z$からポップ
-                    \If{$s$が未探索のノード($N(s)=0$)または終了状態のとき}
-                        \State $\zeta(s_{now}, s_{j})$ を$k$回$Z$の末尾に追加
-                        \State continue
-                    \EndIf
-                    \State 訪問回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
-                    \For {each $a_i$ in $\alpha$}
-                        \State $s_{{next}_j} \gets T(s_{j}, a_i)$
-                        \State $\zeta(s_{now},s_{{next}_i})(=\zeta(s_{now}, s_{j}).append({a_i, s_{{next}_i}}))$を$Z$の末尾に追加
-                    \EndFor
-                    
-                \EndFor     
-           \EndWhile
-           \Return $Z(=\{\zeta(s_{start}, {s'}_1), ..., \zeta(s_{start}, {s'}_{k^l})\})$
-        \EndFunction
-        \Function {Traverse}{$s, \zeta(s_{start}, s)$}
-        \State $s_{now} \gets s$
-        \State $\zeta_r \gets \zeta(s_{start}, s)$
-        \While {$s_{now}が探索済みかつ終了状態でない$}
-            \State $a_t \gets \textrm{argmax}_a N(s_{now}, a)$
-            \State $s_n \gets T(s_{now}, a_t)$
-            \State $\zeta_r.append({a_t, s_n})$
-            \State $s_{now} \gets s_n$
-        \EndWhile
-        \Return $\zeta_r$
-        \EndFunction
-       
-        
-    \end{algorithmic}
-\end{algorithm}
+
+
 
 
 

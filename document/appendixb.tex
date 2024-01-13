@@ -1,6 +1,94 @@
 \chapter{各種アルゴリズムの詳細}
+\label{chap:alg}
+\section{提案手法のアルゴリズム}
+提案手法のアルゴリズムの疑似コードをAlgorithm\ref{alg:myalg-1}、Algorithm\ref{alg:myalg-2}に示す。
+\begin{algorithm}
+    
+    \caption{提案手法のアルゴリズム(part1)}
+    \label{alg:myalg-1}
+    \begin{algorithmic}[1]
+        \State $t$: 手法を適用する探索木
+        \State $T$: 状態遷移関数
+        \State $l$: 盤面の収集を行う手数
+        \State $k$: 一度に集める盤面の数
+        \State $\zeta(s, s')$: ノード$s$から$s'$までの軌道
+        
+       
+        \Function{MyAlgorithm}{$s_{start}, a, l, k$}
+           \State $s_{now}\gets s_{start}$
+           \State $a_{now}\gets a$
+           \State $Z_0 \gets$\Call{CollectBoards}{$s_{now}, a_{now}, l, k$}
+           \State $(Z_0 =\{\zeta(s_{start}, {s'}_1), ..., \zeta(s_{start}, {s'}_{k^l})\})$
+           \State $ Z \gets$ empty list
+           \For {each $\zeta(s_{start}, {s'}_i)$ in $Z_0$}
+             \State $\zeta(s_{start}, s_{{edge}_i}) \gets$ \Call{Traverse}{${s'}_i, \zeta(s_{start}, {s'}_i)$}
+             \State $\zeta(s_{start}, s_{{edge}_i})$を$Z$の末尾に追加
+           \EndFor
+           \State 収集された終了状態の集合$S(=\{s_{edge_1},s_{edge_2}, ..., s_{edge_{k^l}}\})$を任意の共通項$c$で副集合$\{S_1, S_2, ..., S_q\}$に分割する
+           \State 最も要素数の多い副集合$S_{max}$中の各要素$\{s_{e_1}, s_{e_2}, ...,  s_{e_u}\}$
+           \State に対応する軌道の集合$Z_{max}(=\{\zeta(s_{start}, s_{e_1}), \zeta(s_{start}, s_{e_2}), ..., \zeta(s_{start}, s_{e_u})\})$を保存
+           \State \Return $Z_{max}$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+\begin{algorithm}
+    
+    \caption{提案手法のアルゴリズム(part2)}
+    \label{alg:myalg-2}
+    \begin{algorithmic}[1]    
+    \scriptsize   
+        \Function{CollectBoards}{$s, a, l, k$}
+           \State $s_{now} \gets T(s, a)$
+           
+           \State $Z \gets $ empty queue
+            \If{$s$が未探索のノード($N(s)=0$)または終了状態のとき}
+             \Return  $Z$
+            \EndIf
+           \State 訪問回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
+           \For {each $a_i$ in $\alpha$}
+             
+             \State $s_{{next}_i} \gets T(s_{now}, a_i)$
+             \State $\zeta(s_{now},s_{{next}_i})(=\{s_{now}, a_i, s_{{next}_i}\})$を$Z$の末尾に追加
+           \EndFor
+           \If{l=1}
+             \Return $Z$
+           \EndIf
+           \State $i \gets 1$
+           \While {$i < l$}
+                \For {each $\zeta(s_{now}, s_{j})$ in $Z$}
+                    \State $\zeta(s_{now}, s_{j})$ を $Z$からポップ
+                    \If{$s$が未探索のノード($N(s)=0$)または終了状態のとき}
+                        \State $\zeta(s_{now}, s_{j})$ を$k$回$Z$の末尾に追加
+                        \State continue
+                    \EndIf
+                    \State 訪問回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
+                    \For {each $a_i$ in $\alpha$}
+                        \State $s_{{next}_j} \gets T(s_{j}, a_i)$
+                        \State $\zeta(s_{now},s_{{next}_i})(=\zeta(s_{now}, s_{j}).append({a_i, s_{{next}_i}}))$を$Z$の末尾に追加
+                    \EndFor
+                    
+                \EndFor     
+           \EndWhile
+           \Return $Z(=\{\zeta(s_{start}, {s'}_1), ..., \zeta(s_{start}, {s'}_{k^l})\})$
+        \EndFunction
+        \Function {Traverse}{$s, \zeta(s_{start}, s)$}
+        \State $s_{now} \gets s$
+        \State $\zeta_r \gets \zeta(s_{start}, s)$
+        \While {$s_{now}が探索済みかつ終了状態でない$}
+            \State $a_t \gets \textrm{argmax}_a N(s_{now}, a)$
+            \State $s_n \gets T(s_{now}, a_t)$
+            \State $\zeta_r.append({a_t, s_n})$
+            \State $s_{now} \gets s_n$
+        \EndWhile
+        \Return $\zeta_r$
+        \EndFunction
+       
+        
+    \end{algorithmic}
+\end{algorithm}
+
 \section{比較手法のアルゴリズム}
-比較手法の疑似コードを以下に示す。疑似コード中のTraverse()は第三章の疑似コード \ref{alg:myalg-1} \ref{alg:myalg-2}と同一である。
+比較手法の疑似コードを以下に示す。疑似コード中のTraverse()は Algorithm\ref{alg:myalg-2}と同一である。
 \begin{algorithm}
     \caption{比較手法のアルゴリズム}
     \begin{algorithmic}[1]       
