@@ -88,9 +88,10 @@
 \end{algorithm}
 
 \section{比較手法のアルゴリズム}
-比較手法の疑似コードを以下に示す。疑似コード中のTraverse()は Algorithm\ref{alg:myalg-2}と同一である。
+比較手法の疑似コードをAlgorithm \ref{alg:compare}に示す。疑似コード中のTraverse()は Algorithm\ref{alg:myalg-2}と同一である。
 \begin{algorithm}
     \caption{比較手法のアルゴリズム}
+    \label{alg:compare}
     \begin{algorithmic}[1]       
         \State $t$: 手法を適用する探索木
         \State $T$: 状態遷移関数
@@ -123,10 +124,11 @@
 第四章におけるデータ実験、システム実験ではいずれも手法のニューラルネットワークによる補間を行っている。
 第四章で示した疑似コードでは未探索のノードにたどり着いた際は走査を終了する。ニューラルネットワークによる補間とはこの場合、
 方策$P(s, a)$で訪問回数$N(s, a)$を代用し走査を継続することである。
-以下にニューロ補間を行う場合の疑似コードを示す（変更部分に下線）。
+Algorithm\ref{alg:neuro}にニューロ補間を行う場合の疑似コードを示す（変更部分に下線）。
 比較手法に対してニューロ補間を行う場合も同様にTraverse()のコードを変更する。
 \begin{algorithm}
     \caption{提案手法のアルゴリズム(ニューロ補間あり)part1}
+    \label{alg:neuro}
     \small
     \begin{algorithmic}[1]       
         \Function{CollectBoards}{$s, a, l, k$}

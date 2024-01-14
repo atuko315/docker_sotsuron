@@ -4,10 +4,11 @@
 第三章で述べたとおり使用した対戦データは弱いAIを先番とし、強いAIを後手としている。
 AIの強さは一手ごとの探索を行う時間(time)と付録Cで述べる$C_{puct}$の値によって調整した。
 timeと$C_{puct}$はいずれも値が大きい程モデルは強くなると考えられる。
-対戦データ生成時のパラメータは以下の表の幅からゲームごとにランダムな値を採用した。
+対戦データ生成時のパラメータは表\ref{table:param-battle}の幅からゲームごとにランダムな値を採用した。
 これはパラメータの値を変化させることでゲームデータに多様性を持たせるためである。
 \begin{table}[H]
 	\caption{対戦データのパラメータ}
+	\label{table:param-battle}
 	\centering
 	\scalebox{0.98}[0.98]{
 		\begin{tabular}{c|c|c}
@@ -23,7 +24,7 @@ timeと$C_{puct}$はいずれも値が大きい程モデルは強くなると考
 \section{対戦結果の詳細}
 2000ゲームのうち1983ゲームは強いAI(後番)の勝利となった。
 また、ゲームごとの手数は75\%のゲームが36手以内で終了している。
-以下にゲームの終了手数の累計グラフを示す。
+図\ref{fig:stepCum}にゲームの終了手数の累計グラフを示す。
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/stepCum.png}
@@ -34,11 +35,11 @@ timeと$C_{puct}$はいずれも値が大きい程モデルは強くなると考
 本論文が提案する提案指標(group count, stone count)の計算において、盤面の座標は図\ref{fig:index}のように定められる。
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=\linewidth]{./figure/index.png}
+	\includegraphics[trim={0cm 0cm 0cm 0cm},clip]{./figure/index.png}
 	\caption{盤面の座標番号}
 	\label{fig:index}
 \end{figure}
-ゲーム終了状態には以下のように４つ以上連続してつながっている石の座標$F_s$(fatal stoneの集合)とその組み合わせ$F_g$(fatal groupの集合)を記録する。
+ゲーム終了状態には図\ref{fig:fatalGroup}のように４つ以上連続してつながっている石の座標$F_s$(fatal stoneの集合)とその組み合わせ$F_g$(fatal groupの集合)を記録する。
 下の図の盤面は{17, 18, 19, 20, 24, 31, 38}の7つのfatal stoneと{[17, 18, 19, 20], [17, 24, 31, 38]}の二つのfatal groupを持つ
 \begin{figure}[t]
 	\centering
@@ -70,14 +71,13 @@ stone countはfatal stoneの精度を示す。stone countの値域は[0, 1]で�
 		\begin{itemize}
 			\item group count: fatal groupによって$S$をグループ化してできた集合$\{S_{g_1}, S_{g_2}, ..., S_{g_n}\}$($S_{g_i}$は組み合わせ$g_i$がfatal groupとなっている盤面の集合)
 			を要素が多い順に二つ取り出す。抽出された二つの集合$\{S_{g_{m_1}}, S_{g_{m_2}}\}$における$\{g_{m_1}, g_{m_2}\}$で構成される集合を$F_g$とし、group countを計算した。
-			\item stone count: fatal stoneによって$S$をグループ化してできた集合$\{S_0, S_1, ..., S_41\}$($S_i$は番号$i$の座標がfatal stoneとなっている盤面の集合)
-			を要素数が多い順に４つ取り出す。抽出された４つの集合$\{S_{m_1}, S_{m_2}, S_{m_3}, S_{m_4}\}$における$\{m_1, m_2, m_3, m_4\}$で構成される集合を$F_s$とし、stone countを計算した。
+			\item stone count: $g_{m_1}$を$F_s$とし、stone countを計算した。
 		\end{itemize}
 		
 \end{enumerate}
 
 \section{データ実験に使用したモデルの詳細}
-第4章に記載した表\ref{table:result-online}の結果を求める際に用いたモデルのパラメータは以下である。
+第4章に記載した表\ref{table:result-online}の結果を求める際に用いたモデルのパラメータを表\ref{table:param-data}に示す。
 \begin{table}[H]
 	\caption{データ実験:使用モデルのパラメータ}
 	\centering
@@ -95,8 +95,40 @@ stone countはfatal stoneの精度を示す。stone countの値域は[0, 1]で�
 
 表\ref{table:param-data}の通り、対戦データが生成された際のモデルのパラメータを使用している。
 そのため本手法はモデルの構造とパラメータの値へのアクセスが可能な場合を想定したホワイトボックス的アプローチの実験であると言える。
-モデルのtime, $C_{puct}$の値を固定して同様の手法を適用した場合の実験結果を次のセクションで示す。
+モデルのtime, $C_{puct}$の値を固定して同様の手法を適用した場合の実験結果を\ref{sec:gray}で示す。
+\section{末尾のグループ化}
+提案手法は予想図とその予想図に至る分岐(両方を合わせて進行図と記載)を抽出する。
+図\ref{fig:regroup}は分岐を末尾の3手で2つのグループに再編する様子を表している。(ここでは分岐は行動$a$の連続として表している)
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{./figure/regroup.pdf}
+	\caption{再グループ化}
+	\label{fig:regroup}
+\end{figure}
+取り出された分岐を末尾の3手の選択でさらにグループ化した結果、元の分岐の数と再グループ化された分岐の数の平均は
+表\ref{table:tail}のようになった。
+結果として、取り出された分岐のうち、平均約2$\sim$3つの分岐において末尾の3手が共通する傾向にあることがわかった。
+\begin{table}[H]
+	\caption{再グループ化した際の分岐の数}
+    \scriptsize
+    \label{table:tail}
+	\centering
+	\scalebox{0.98}[0.98]{
+		\begin{tabular}{c|c|c||c}
+			手数(盤面数, 補間の有無)&  再グループ化前の分岐数(平均)&  再グループ化後の分岐数(平均)\\ \hline
+			19-24(9862, 無)    &  & 0.44  \\
+			19-24(9862, 有)    &  & 0.44   \\
+			13-24(21022, 無)   & 6.95 & 3.08  \\
+			13-24(21022, 有)   & 12.93 & 4.51 \\
+			全て(61049,無)& & \\
+			全て(61049,有)&　&\\
+		\end{tabular}
+	}
+
+	
+\end{table}
 \section{グレーボックス的手法}
+\label{sec:gray}
 モデルのパラメータを固定し、再び第四章のデータ実験を行った。パラメータの値を固定しているため、本実験はモデルの具体的なパラメータの値へのアクセスが不可能な場合にも適用可能な
 グレーボックス的手法であると言える。
 \begin{table}[H]

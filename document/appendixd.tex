@@ -2,7 +2,26 @@
 \label{chap:system}
 システム実験では全三回にわたる実験を行い、被験者同士の対戦を行う第三回以外の二回は被験者がAIとの対戦とAIを用いた振り返りを行う。
 第四章と同様に３回１セットの実験のうち、前半二回を第一段階・後半一回を第二段階と呼ぶ。
-以下で実験設定や結果の詳細を段階ごとに述べていく。
+以下で被験者のデータの詳細を述べ、それから実験設定や結果の詳細を段階ごとに述べていく。
+\section{被験者のデータ}
+実験対象者は計22人の10代-20代学生(男性17名:女性5名)であり、表\ref{table:before}に示す各種の事前質問($1\sim5$の値で答える)の結果は以下となった。
+ボードゲームの経験を問う質問に関しては1を「1年に1回程プレイする」程度、5を「週に2,3回以上プレイする」程度と定めた。
+connect4の経験を問う質問に関しては1を「connect4を知らない」程度、5を「週に2,3回以上プレイする」程度と定めた。
+また、機械学習・強化学習の知識を問う質問に関しては1を「言葉を聞いたことがある」程度、5を「機械学習についての入門書を読んだり、授業を受けたことがある」程度と定めた。
+また、被験者には先述のAllis\cite{allis}による9strategyをはじめとしたconnect4の知識的解法をネット検索等の手段で調べないよう要請した。
+\begin{table}[H]
+    \caption{事前質問項目:システム実験}
+    \label{table:before}
+	\scriptsize
+    \begin{tabular}{l||c}
+        \multicolumn{1}{c|}{質問} & 回答の平均\\ \hline \hline
+        ボードゲームの経験はどれくらいありますか & 2.18\\
+        connect4(ゲーム)の経験はどれくらいありますか& 1.64\\\hline
+        機械学習に対する知識はどれくらいありますか& 3.59\\
+        強化学習に対する知識はどれくらいありますか& 3.23\\
+    \end{tabular}
+    
+\end{table}
 \section{第一段階}
 第一段階はAIとの対戦とその振り返りによって構成されている。
 振り返りモードでは表示する予想図の手数、AIの強さを被験者ごとに変更しつつ実験を行った。
@@ -34,15 +53,15 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
 数字が書かれているボタンはAIモデル(対戦に使ったモデルと同じ)による予想図を提示するボタンであり、ボタンに描かれた数字
 と同じ列を選択した場合の予想図を見ることができる。
 図\ref{fig:number-button}では「4」と描かれたボタンを押した結果、左から4番目を選択した場合の予想図が表示されていることがわかる。
-選択した位置は「\*」マークで表示される。
+選択した位置は「*」マークで表示される。
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=\linewidth]{./figure/trajSystem.png}
+    \includegraphics[width=\linewidth]{./figure/trajSystem.pdf}
 	\caption{予想図の提示}
 	\label{fig:number-button}
 \end{figure}
 想定図中の数字は数字の大きさの順番に石が置かれるというAIの予想を表している。図\ref{fig:number-button}
-では赤が「\*」マークの位置に石を置いた次に黄は左から3列目の位置、その次に赤は左から3列目に打つことが予測されている。
+では赤が「*」マークの位置に石を置いた次に黄は左から3列目の位置、その次に赤は左から3列目に打つことが予測されている。
 また、図中で色づけられている部分は予想図においてその部分がは四つ以上つながることを示している。赤く色づけられている場合はその部分で
 赤が４つ以上つながると予想されていること、黄色く色づけられている場合はその部分で黄色が４つ以上つながると予想されているこを示している。
 また、提案手法による振り返りが適用されたグループでは提示される予想図が複数となる。そのため図\ref{fig:multi}に示すように他の想定図を見ることができる「next\_prej/pre\_traj」
@@ -119,7 +138,7 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{||c}{主観評価} \\ \hline \hline
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & 3.55 & \bf{3.86} \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & 2.73 & \bf{3.32} \\
@@ -131,7 +150,7 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
     \label{table:system-all}
 \end{table}
 
-また、AIの強さごとに集計した結果は以下である。
+また、AIの強さごとに集計した結果を表\ref{table:system-strong}、表\ref{table:system-weak}に示す。
 表\ref{table:system-strong}に強いAIを用いて訓練した被験者のデータ、表\ref{table:system-weak}に
 弱いAIを用いて訓練した被験者のデータを示す。
 \begin{table}[H]
@@ -140,7 +159,7 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{||c}{主観評価} \\ \hline \hline
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & 3.67 & \bf{3.82} \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & 2.58 & \bf{3.55} \\
@@ -158,7 +177,7 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{||c}{主観評価} \\ \hline \hline
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & 3.8 & \bf{3.33} \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & 3.00 & 3.00 \\
@@ -169,14 +188,14 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
     }
     \label{table:system-weak}
 \end{table}
-また、一日目のデータを表\ref{table:data-day1}、二日目のデータを表\ref{table:data-day2}に記載する。
+また、一日目のデータを表\ref{table:system-day1}、二日目のデータを表\ref{table:system-day2}に記載する。
 \begin{table}[H]
     \caption{結果:一日目}
     \scriptsize
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            \multicolumn{2}{c}{質問} & \multicolumn{2}|{|c}{主観評価} \\ \hline \hline
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & 3.56 & \bf{3.78} \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & \bf{3.05} & 2.94 \\ \hline

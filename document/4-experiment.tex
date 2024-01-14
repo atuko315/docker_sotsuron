@@ -3,8 +3,8 @@
 一つ目の実験はコンピュータ同士の対戦データを用いて提案手法による想定図の妥当性の実証を試みた（以下データ実験と表記）。
 二つ目の実験は自作のconnect4学習支援システムを用いて提案手法のユーザーインタフェースを含んだ優位性の実証を試みた(以下システム実験と表記)。
 この章ではまず実験の際に用いたタスクであるconnect4と使用したモデルであるalphazero\_baselineについて述べる。そののちにデータ実験、システム実験の詳細と結果を記載する。
-\section{connect4\cite{connect4}}
-connect4はボードゲームの一種である。ルールは五目並べに極めて近く、二人のプレイヤーが交互に互いの駒を盤上に置き、最終的に縦・横・もしくは斜めに連続して4つの石を並べたプレイヤーの勝利となる。ただし、五目並べや連珠との相違点として「重力」の存在が挙げられる。
+\section{connect4}
+connect4\cite{connect4}はボードゲームの一種である。ルールは五目並べに極めて近く、二人のプレイヤーが交互に互いの駒を盤上に置き、最終的に縦・横・もしくは斜めに連続して4つの石を並べたプレイヤーの勝利となる。ただし、五目並べや連珠との相違点として「重力」の存在が挙げられる。
 この「重力」とは各プレイヤーが石をボード上の最も下の行または既に置かれた石の上にしか置けないという規則を表している。そのため、各プレイヤーの選択肢はボードの列の数と等しい。
 connect4の一般的なボードの広さは$6\times7$であり$6\times7$のコネクト4については1988年にAllis\cite{allis}により知識ベースの手法による先番勝利が証明された。
 Tromp\cite{data}によるconnect4の$\alpha-\beta$木探索によって導かれた各盤面の最善手とそのデータも一般に公開されている。
@@ -12,20 +12,22 @@ Tromp\cite{data}によるconnect4の$\alpha-\beta$木探索によって導かれ
 本論文の実験において提案手法をconnect4に適用する際には最終盤面において4つ以上並んでいる石の座標を特徴として用いた。
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=\linewidth]{./figure/connect4.png}
+    \includegraphics[trim={0cm 0cm 0cm 0cm},clip]{./figure/connect4.png}
 	\caption{connect4}
 	\label{fig:connect4}
 \end{figure}
-\section{alphazero\_baseline\cite{baseline}}
-alphazero\_baselinはalphaZeroをconnect4用に簡易的に模したネットワークであり、入力は最新の盤面$s_0$、出力は$1\times7$(7はボードの列の数)の方策$P(s)(以下s=s_0とする)$とスカラー値の局面評価$V(s)$(値域は-1から1)である。
+\section{alphazero\_baseline}
+alphazero\_baseline\cite{baseline}はalphaZeroをconnect4用に簡易的に模したネットワークであり、入力は最新の盤面$s_0$、出力は$1\times7$(7はボードの列の数)の方策$P(s)(以下s=s_0とする)$とスカラー値の局面評価$V(s)$(値域は-1から1)である。
 方策は確率分布であり、要素の値が大きいインデックスを選択することで勝利に近づくと予想される。
 局面評価は入力に対する評価を表しており、1が入力の手番のプレイヤーにとっての勝利、-1が敗北の予想を表している。
 \begin{figure}[t]
-	\centering
-	\includegraphics[width=\linewidth]{./figure/baseline.png}
-	\caption{alphazero\_baselineの入出力}
-	\label{fig:baseline}
+    \centering
+    \includegraphics[trim={0cm 0cm 0cm 0cm},clip]{./figure/baseline.png}
+
+    \caption{alphazero\_baselineの入出力}
+    \label{fig:baseline}
 \end{figure}
+
 
 \section{データ実験}
 \label{chap:evaluation}
@@ -43,7 +45,7 @@ alphazero\_baselinモデル同士の対戦データ2000局分(盤面数:61049)�
 図\ref{fig:compare}は比較手法の概要を示している。
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=\linewidth]{./figure/compare.png}
+	\includegraphics[width=\linewidth]{./figure/compare.pdf}
 	\caption{提案手法と比較手法の比較}
 	\label{fig:compare}
 \end{figure}
@@ -83,6 +85,20 @@ group countと同様に$F_s$と$R_s$が両方とも空集合である場合stone
 	}
 	\label{table:result-online}
 \end{table}
+\subsection{考察(データ実験)}
+提案手法はgroup countにおいて比較手法より高い結果を示した。
+この結果は提案手法がfatal groupを予測する能力に長けている事を意味する。
+比較手法によって予測されるfatal groupの集合は
+最も訪問回数が大きい分岐が辿り着く１つの最終状態のものである。
+一方で提案手法により予測されるfatal groupの集合は、複数の分岐がそれぞれに辿り着く最終状態のfatal groupの多数派投票によって決定され、第1位と第2位のものが採用される。\\
+使用した対戦データは対戦者間の強さに差があり、予測は強い側の決定木を用いている。
+決定木内での最も訪問回数の大きい分岐(以下主分岐と記載)はAIが予測する双方が最善を尽くした場合の進行と解釈される。
+実際に弱いAIと対戦を行う際には、弱いAIは強いAIが最善とみなす行動(最も訪問回数が大きい行動)を必ずしも選択しない。
+そのため、実際の進行は、比較手法に用いられる主分岐とは異なる可能性が高い。
+提案手法では、主分岐を含む複数の分岐を用いているため、より精度の高い予測が可能になったと考えられる。\\
+また、提案手法は2組のfatal groupを保存することから比較手法よりも予測するfatal groupの数が多くなる傾向にあるため、必然的にgroup countの値も大きくなったとも考えられる。
+
+
 \section{システム実験}
 提案手法の人間に対する有効性を示すため以下のような自作したconnect4の学習支援システムを用いて実験を行った。
 実験対象者は計22人の10代-20代学生(男性17名:女性5名)となった。
@@ -112,8 +128,8 @@ group countと同様に$F_s$と$R_s$が両方とも空集合である場合stone
 \end{figure}
 数字が描かれたボタンは列のインデックスを表しており、各ボタンを押した際にその列を選択した場合の想定図と局面評価を確認できる。
 \begin{figure}[t]
-	\centering
-	\includegraphics[width=\linewidth]{./figure/trajSystem.png}
+    \centering
+    \includegraphics[width=\linewidth]{./figure/trajSystem.pdf}
 	\caption{予想図の表示}
 	\label{fig:trajSystem}
 \end{figure}
@@ -132,7 +148,7 @@ group countと同様に$F_s$と$R_s$が両方とも空集合である場合stone
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{||c}{主観評価} \\ \hline \hline
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & \bf{3.29} & 3.17 \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & 2.43 & \bf{2.67} \\
@@ -149,7 +165,7 @@ group countと同様に$F_s$と$R_s$が両方とも空集合である場合stone
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{||c}{主観評価} \\ \hline \hline
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & 3.00 & \bf{4.00} \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & 2.60 & \bf{4.00} \\
@@ -166,7 +182,7 @@ group countと同様に$F_s$と$R_s$が両方とも空集合である場合stone
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{||c}{主観評価} \\ \hline \hline
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & {3.83} & \bf{4.33} \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & 2.67 & \bf{3.67} \\
@@ -183,7 +199,7 @@ group countと同様に$F_s$と$R_s$が両方とも空集合である場合stone
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{||c}{主観評価} \\ \hline \hline
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & \bf{4.25} & 4.00 \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & \bf{3.50} & 3.00 \\
@@ -194,13 +210,14 @@ group countと同様に$F_s$と$R_s$が両方とも空集合である場合stone
     }
     \label{table:system-100}
 \end{table}
-また、第二段階である被験者同士の対戦結果は以下となった。
+また、第二段階である被験者同士の対戦結果を表\ref{table:result-battle}に示す。
 付録Dに示すように被験者一人に対して二回対戦を行った。結果として示すscoreは勝利を1,敗北を-1,引き分けを0
 とした二回の対戦の平均値として定義される。
 結果は表\ref{table:result-battle}に記載する。提案手法を用いて訓練を行ったグループ(A)は比較手法を用いて訓練を行ったグループ(B)よりも高い
 勝率を記録した。
 \begin{table}[H]
 	\caption{対戦の結果}
+    \label{table:result-battle}
 	\centering
 	\scalebox{0.98}[0.98]{
 		\begin{tabular}{c|c}
@@ -209,14 +226,86 @@ group countと同様に$F_s$と$R_s$が両方とも空集合である場合stone
 			B(比較手法)    & -0.15 \\
 		\end{tabular}
 	}
-	\label{table:result-battle}
+	
 \end{table}
+また、第三章で示した新たな重要度の定義(式\ref{new-imp})の妥当性を検証するため、盤面$s$の重要度$I(s)$と被験者が$s$の進行図を
+見た時間$t$の相関を調査した。比較手法には式\ref{imp}の定義を用いた。
+結果を表\ref{table:result-imp}と示す。いずれの手法も$t$との有意な相関が見られなかった。
+\begin{table}[H]
+	\caption{重要度と$t$の相関}
+    \label{table:result-imp}
+	\centering
+	\scalebox{0.98}[0.98]{
+		\begin{tabular}{c|c|c}
+			日数& 提案手法 & 比較手法 \\ \hline
+			1日目& \bf{-0.035}& -0.034\\
+            2日目& \bf{-0.083}& 0.067\\
+		\end{tabular}
+	}
+	
+\end{table}
+
+
 \subsection{考察（システム実験）}
 
 
+提案手法を用いたグループAがグループBを上回る評価を得たのは、主に先読みが最も短い3手の場合と最も長い制限なしの場合となった。
+
+先読み3手・制限なしの場合のデータをさらに1日目、2日目で分類した結果、
+\begin{itemize}
+    \item 先読み3手の場合は1日目
+    \item 先読み制限なしの場合は２日目
+\end{itemize}
+
+の方がよりグループAからの評価が高いことが分かった。
+付録\ref{chap:system}で述べるように、1日目と2日目ではGUIの設定に差があり
+1日目のGUIでは全ての選択肢(最大7種)を起点とした進行図を閲覧可能であるのに対し、2日目のGUIでは起点となる選択肢を
+二つに制限した。
+そのため、2日目は被験者が見られる予想図の数が1日目の約$\frac{1}{3}$となる。
+
+そのため、「1日目・先読み3手の場合」と「2日目・先読み制限なし」の場合に被験者が受け取る情報量は近しいと推測される。
+
+また、データを「被験者のグループ・日にち・先読み手数」によって分類し、「振り返りによってAIの意図を掴むことができたと感じますか」という質問に対する評価(以下把握満足度と表記)の降順に
+並べた直した結果を表\ref{table:order}に示す。
+\begin{table}[H]
+	\caption{把握満足度}
+    \scriptsize
+    \label{table:result-imp}
+	\centering
+	\scalebox{0.98}[0.98]{
+		\begin{tabular}{c|c|c||c}
+			グループ& 日 & 先読み手数 &把握満足度 \\ \hline
+			B & 2 & 5 & 4.67\\
+            B & 2 & 7 & 4.00\\
+            A & 1 & 制限なし& 3.50\\
+            A & 2 & 制限なし& 3.50\\
+            B & 1 & 3& 3.50\\
+            B & 1 & 制限なし& 3.33\\
+            A & 1 & 3& 3.33\\
+            \multicolumn{4}{|c|}{(\ldots)}\\
+            A & 2 & 3 & 1.75\\
+            B & 1 & 3 & 1.50\\
+
+		\end{tabular}
+	}
+	
+\end{table}
+
+グループAのデータを日にちと先読み手数で分けた場合最も把握満足度が高いのは
+「2日目・先読み制限なし」、次いで「1日目・先読み制限なし」、「一日目・先読み3手」となった。
+最も情報が少ない「2日目・3手」はグループAの全8パターン中最下位となった。\\
 
 
-\begin{comment}
-	また，ああああああ
-\end{comment}
+グループBに対しても同様に「振り返りによってAIの意図を掴むことができたと感じますか」への評価を集計した結果、
+最も評価が高いのは「2日目・5手」、次いで「2日目・5手」、「2日目・7手」となった。\\
+
+
+
+また、付録\ref{chap:data}より提案手法が示す1組の状態$s$、行動$a$について示す分岐の数$n$の平均は　ため、比較手法が示す情報量は提案手法の？/?となる。
+そのため提示する情報量が大きい程評価が高くなるわけではなく、手法ごとに被験者が適切と感じる情報量が存在すると推測される。\\
+
+以上の考察を踏まえて先読みを「1$\sim$5」として再実験を行った。
+システム実験では補助として提示した訪問回数、局面評価に注目する被験者が多く見られたため、訪問回数「count」の表示を廃止した。
+結果は以下のようになった。
+
 

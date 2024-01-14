@@ -40,8 +40,7 @@ Temporary Difference法やMonte Carlo法等が基本的な$V(s),Q(s, a)$の更�
 AlphaGo\cite{AlphaGo}やStockFish\cite{StockFish}、DeepLearningShogi\cite{dlshogi}では状態$s$は最新$N$ステップの盤面と手数などのゲームのプレイにおいて重要な情報である。
 状態は行列等の形式に抽象化され、行動は次にプレイヤーが打つ箇所の座標となる。
 \begin{figure}[t]
-	\centering
-	\includegraphics[width=\linewidth]{./figure/transition.png}
+	\includegraphics[trim={0cm 0cm 0cm 0cm},clip]{./figure/transition.png}
 	\caption{ボードゲームにおける強化学習モデル}
 	\label{fig:board-game-model}
 \end{figure}
@@ -229,7 +228,7 @@ Mishraらの\cite{whyNot}では医療タスクにおけるニューラルネッ�
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/contrastive.png}
-	\caption{ボードゲームにおける強化学習モデル}
+	\caption{contrastive explanation}
 	\label{fig:contrastive}
 \end{figure}
 \subsection{importance}
@@ -242,6 +241,7 @@ Torrayらは$I(s)$を$s$から辿り着きうる最善の$Q(s, a)$と最悪の$Q
 \end{equation}
 Amirらは$I(s)$を$s$から辿り着きうる最善の$Q(s, a)$と二番目に値の大きい$Q(s, a)$の差として定義している。
 \begin{equation}
+    \label{imp}
 	{I(s)= \textrm{max}Q(s, a)-\textrm{secondMax}Q(s, a)}
 \end{equation}
 しかし、これらの定義はimpが$Q(s, a)$の値が低くなるような行動$a$に大きく影響されるリスクや、図\ref{fig:symmetry}のように状態に対称性があるような場合に重要度が小さくなってしまうリスクがある。
