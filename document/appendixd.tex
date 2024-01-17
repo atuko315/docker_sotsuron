@@ -35,6 +35,7 @@ connect4の経験を問う質問に関しては1を「connect4を知らない」
 			モデル&強&弱\\\hline
 			time    & 5 & 1 \\ 
 			$C_{puct}$ & 1   & 0.25 \\
+            エポック数 & 200 & 1 \\
 			$k$ (提案手法のみ)     & 4 & 4 \\
 			$l$ (提案手法のみ)     & 2 & 2 \\
 
@@ -105,6 +106,7 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
 			パラメータ名 & 値 \\ \hline
 			time    & 0\\ 
 			$C_{puct}$    & 1 \\
+            エポック数 & 200 \\
 		\end{tabular}
 	}
 	\label{table:param-judge}
@@ -138,7 +140,7 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{||c}{主観評価} \\ \hline \hline
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{c}{主観評価} \\ \hline \hline
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & 3.55 & \bf{3.86} \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & 2.73 & \bf{3.32} \\
@@ -159,7 +161,7 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{||c}{主観評価} \\ \hline \hline
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{c}{主観評価} \\ \hline \hline
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & 3.67 & \bf{3.82} \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & 2.58 & \bf{3.55} \\
@@ -177,7 +179,7 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{||c}{主観評価} \\ \hline \hline
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{c}{主観評価} \\ \hline \hline
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & 3.8 & \bf{3.33} \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & 3.00 & 3.00 \\
@@ -195,7 +197,7 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}|{|c}{主観評価} \\ \hline \hline
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{c}{主観評価} \\ \hline \hline
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & 3.56 & \bf{3.78} \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & \bf{3.05} & 2.94 \\ \hline
@@ -212,7 +214,7 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{|c}{主観評価} \\ \hline \hline
+            \multicolumn{2}{c}{質問} & \multicolumn{2}{c}{主観評価} \\ \hline \hline
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & 3.55 & \bf{3.91} \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & 2.45 & \bf{3.64} \\ 
