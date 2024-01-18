@@ -2,8 +2,8 @@
 \label{chap:data}
 \section{使用したモデルの詳細}
 第三章で述べたとおり使用した対戦データは弱いAIを先番とし、強いAIを後手としている。
-AIの強さは一手ごとの探索を行う時間(time)と付録Cで述べる$C_{puct}$,ニューラルネットワークの訓練段階におけるエポック数の値によって調整した。
-timeと$C_{puct}$,エポック数はいずれも値が大きい程モデルは強くなると考えられる。(エポック数については付録\ref{chap:baseline}を参照)
+AIの強さは一手ごとの探索を行う時間(time)、付録Cで述べる$C_{puct}$、ニューラルネットワークの訓練段階におけるエポック数の値によって調整した。
+timeと$C_{puct}$、エポック数はいずれも値が大きい程モデルは強くなると考えられる。(エポック数については付録\ref{chap:baseline}を参照)
 対戦データ生成時のパラメータは表\ref{table:param-battle}の幅からゲームごとにランダムな値を採用した。
 これはパラメータの値を変化させることでゲームデータに多様性を持たせるためである。
 \begin{table}[H]
@@ -25,6 +25,7 @@ timeと$C_{puct}$,エポック数はいずれも値が大きい程モデルは�
 \section{対戦結果の詳細}
 2000ゲームのうち1983ゲームは強いAI(後番)の勝利となった。
 また、ゲームごとの手数は75\%のゲームが36手以内で終了している。
+そのため、データ実験ではゲームの中盤と言える13$\sim$24手目のデータを使用した。
 図\ref{fig:stepCum}にゲームの終了手数の累計グラフを示す。
 \begin{figure}[t]
 	\centering
@@ -36,12 +37,12 @@ timeと$C_{puct}$,エポック数はいずれも値が大きい程モデルは�
 本論文が提案する提案指標(group count, stone count)の計算において、盤面の座標は図\ref{fig:index}のように定められる。
 \begin{figure}[t]
 	\centering
-	\includegraphics[trim={0cm 0cm 0cm 0cm},clip]{./figure/index.png}
+	\includegraphics[width=100pt]{./figure/index.png}
 	\caption{盤面の座標番号}
 	\label{fig:index}
 \end{figure}
 ゲーム終了状態には図\ref{fig:fatalGroup}のように４つ以上連続してつながっている石の座標$F_s$(fatal stoneの集合)とその組み合わせ$F_g$(fatal groupの集合)を記録する。
-下の図の盤面は{17, 18, 19, 20, 24, 31, 38}の7つのfatal stoneと{[17, 18, 19, 20], [17, 24, 31, 38]}の二つのfatal groupを持つ
+下の図の盤面は$\{17, 18, 19, 20, 24, 31, 38\}$の7つのfatal stoneと$\{[17, 18, 19, 20], [17, 24, 31, 38]\}$の二つのfatal groupを持つ
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/fatalGroup.png}
@@ -53,7 +54,7 @@ group count($C_g$), stone count($C_s$)は実際のゲームにおけるfatal gro
 \subsection{group count}
 fcountはfatal groupの精度を示す二値(0または1)の指標である。
 \begin{equation}
-	{C_g = 1 \textrm{If} F_g \cap R_g \ne \phi \textrm{Else} 0}
+	{C_g = 1 \quad \textrm{If} \quad F_g \cap R_g \ne \phi \quad \textrm{Else} \quad 0}
 \end{equation}
 例外として$R_g=\phi$(引き分け)の場合,$F_g$も空集合であるならばgroup countは1となる。
 \subsection{stone count}

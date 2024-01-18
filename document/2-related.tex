@@ -45,7 +45,7 @@ AlphaGo\cite{AlphaGo}やStockFish\cite{StockFish12}、DeepLearningShogi\cite{dls
 	\label{fig:board-game-model}
 \end{figure}
 
-また、図\ref{fig:connect4-symbol}に示すように本論文で使用したalphazero\_baselineモデル\cite{baseline}における入力は最新の盤面の状態を空白を0, 先番(赤)の石の位置を1, 後番（黄）の位置を-1として抽象化した6$\times$7の行列となる。
+また、図\ref{fig:connect4-symbol}に示すように本論文で使用したalphazero\_baselineモデル\cite{baseline}における入力は最新の盤面の状態を空白を0、先番(赤)の石の位置を1、後番（黄）の位置を-1として抽象化した6$\times$7の行列となる。
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/symbolic.png}
@@ -78,7 +78,7 @@ PV-モンテカルロ木探索ではシミュレーションによって$s$ま�
 最終的に各ノード$s$から派生する各行動$\left\{a_1, a_2, ..., a_n\right\}$の探索回数の分布$N(s)(={N(s, a_1), N(s, a_2), ..., N(s, a_n)})$が改善された方策となる。
 一方、局面評価もまたモンテカルロ木探索により決定木が拡張されるなかで更新される。Algorithm\ref{alg:mcts-1},Algorithm\ref{alg:mcts-2}に決定木と局面評価$V(s)$の詳細な更新アルゴリズムを示し、ここでは大まかな流れを示す。
 PV-MCTSのアルゴリズムの流れは以下の通りである。
-図を追加
+（余裕があれば図を追加）
 \begin{enumerate}
     \item まず、探索の開始地点となるノード$s$を決定する。
     \item 再帰部分では以下の処理を再帰的に呼び出す。
@@ -102,7 +102,7 @@ PV-MCTSのアルゴリズムの流れは以下の通りである。
 
 
 	
-このようなプロセスによって構築された決定木を用いてモデルは対戦を行う。
+このようなプロセスによって決定木を構築しつつ、モデルは対戦を行う。
 \newpage
 \begin{algorithm}
     \caption{PV-MCTS in AlphaZero (Part 1: Exploration)}
@@ -179,7 +179,6 @@ PV-MCTSのアルゴリズムの流れは以下の通りである。
 
 
 \subsection{ボードゲームAIの問題点}
-stockfish 追加
 AlphaZeroは当時の正解最高峰のAIであるチェスのStockFish\cite{StockFish}や将棋のelmo\cite{elmo}を凌ぐ性能を発揮した。
 それらの従来の有力なボードゲームAIは設計がそのゲーム固有の知識(ドメイン知識)に依存する割合が多かったため、
 「ある条件を満たすときにある選択をする」と言ったようにその挙動をルールの集合として解釈できる余地があった。その意味ではStockFIsh12やelmoはその設計が説明性を有していたといえる。
@@ -221,18 +220,18 @@ AIによる画像分類タスクの可視化手法として用いられていた
 	\item 本来ゲームに存在する時系列の要素を説明に含められない
 	\item 時系列を無視してゲーム画面や盤面の一部を変更する必要がある
 \end{itemize}
-という問題点が存在する。
+という問題点が存在する。また、saliency mapやGrad-CAMは主にニューラルネットワークに対する説明手法であり、決定木への応用が困難さも欠点として挙げられる。
 
 \subsection{contrastive explanation}
-上述の問題点を解決するために、本論文の第4章におけるシステムではAlphaZeroが構築する決定木を用いたcontrastive explanation（対象説明、比較説明）を提供する。
-contrastive explanationは事象を説明する際の方法論の1つであり、
+上述の問題点を解決するために、本論文の第4章におけるシステムではAlphaZeroが構築する決定木を用いたcontrastive explanation(対象説明、比較説明)を提供する。
+contrastive explanationは事象を説明する際の方法論の1つであり、図\ref{fig:contrastive}に示すように
 ある事象$a$が起こった際にその理由を直接説明する代わりに「他の事象$\bar{a}$が起こらなかった理由」を説明することで間接的にある事象$a$の原因を説明するアイデアである\cite{contrastive}。
 Jacoviらの\cite{contrastive}では自然言語処理の分類タスクにおいて本来の入力データと編集された入力データの出力を比較することで、入力のどの部分がモデルの判断に寄与しているかを示している。
 Mishraらの\cite{whyNot}では医療タスクにおけるニューラルネットワークの判断を決定木に近似した上でAIの判断$a$から派生する予想と別の判断$b$から派生する予想を提示する形でAIによる判断の妥当性を示している。
 また、Gajcinらの\cite{preference}では異なるモデルの挙動の違いをユーザーに示す目的でcontrastive explanationが用いられている。
 これらの強化学習・木構造ネットワークに対するconstrative explanationの手法は決定木上の「最も可能性が高い」「単一の」予想図を用いることを前提としている。
 そのため第3章でしめす提案手法では決定木上の複数の予想図を用いたconstrative explanationの実現を試みた。
-図\ref{fig:contrastive}に決定木ネットワークにおけるcontrasitive explanationのイメージを示している。
+
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/contrastive.png}
@@ -256,11 +255,11 @@ Amirらは$I(s)$を$s$から辿り着きうる最善の$Q(s, a)$と二番目に�
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=80pt]{./figure/symmetry.png}
-	\caption{ボードゲームにおける強化学習モデル}
+	\caption{対称性がある盤面の例}
 	\label{fig:symmetry}
 \end{figure}
 また、Guoら\cite{EDGE}は重要度$I$を収益$G$が確定するまでの一連の流れ（エピソード）やエピソード内の時点$t$の重要度を収益$G$との関連度の大きさから多角的に定めている。
-しかし、Guoらの定義は状態の符号化や回帰などのデータの加工段階が多く、指標自体の説明性に疑問が残る。AIモデルに対して説明を加える際にはその手法自体もなるべく簡明である方が望ましいと考えられる。
+しかし、Guoらの定義は状態の符号化や回帰などのデータの加工段階が多く、指標自体の説明性に疑問が残る。AIモデルに対して説明を加える際にはその手法自体もなるべく簡明であり、勝敗に直結している方が望ましいと考えられる。
 
 
 
