@@ -12,9 +12,9 @@ connect4の経験を問う質問に関しては1を「connect4を知らない」
 \begin{table}[H]
     \caption{事前質問項目:システム実験}
     \label{table:before}
-	\scriptsize
-    \begin{tabular}{l||c}
-        \multicolumn{1}{c|}{質問} & 回答の平均\\ \hline \hline
+	\small
+    \begin{tabular}{c||c}
+        \multicolumn{1}{c}{質問} & 回答の平均\\ \hline \hline
         ボードゲームの経験はどれくらいありますか & 2.18\\
         connect4(ゲーム)の経験はどれくらいありますか& 1.64\\\hline
         機械学習に対する知識はどれくらいありますか& 3.59\\
@@ -68,10 +68,10 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
 また、図中で色づけられている部分は進行図においてその部分がは四つ以上つながることを示している。赤く色づけられている場合はその部分で
 赤が４つ以上つながると予想されていること、黄色く色づけられている場合はその部分で黄色が４つ以上つながると予想されているこを示している。
 また、提案手法による振り返りが適用されたグループでは提示される進行図が複数となる。そのため図\ref{fig:multi}に示すように他の想定図を見ることができる「next\_prej/pre\_traj」
-が追加される。
+ボタンが追加される。
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=\linewidth]{./figure/multi.png}
+	\includegraphics[width=150pt]{./figure/multi.png}
 	\caption{提案手法による進行図の提示}
 	\label{fig:multi}
 \end{figure}
@@ -123,7 +123,8 @@ $N(s),V(s)$は対戦に使用したモデルから導かれる。
 \begin{table}[H]
     \caption{質問項目:システム実験}
     \label{table:query}
-	\scriptsize
+    \centering
+	\small
     \begin{tabular}{c||l}
         \multicolumn{1}{c|}{質問の種類} & \multicolumn{1}{c}{質問の内容} \\ \hline \hline
         \multicolumn{1}{c||}{}&対局によって成長したと感じましたか \\
