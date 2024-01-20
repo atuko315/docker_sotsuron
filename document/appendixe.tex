@@ -1,9 +1,9 @@
 \chapter{システム追加実験の詳細}
 \label{chap:system}
-システム実験では全三回にわたる実験を行ったが追加実験ではシステムの実験の第一段階における一日目のみを実施した。
+システム実験では全三回にわたる実験を行ったが追加実験ではシステムの実験の第一段階における一日目のみを実施した.
 \section{被験者のデータ}
-実験対象者は計22人の10代-20代学生(男性6名:女性4名)であり、システム実験と同様の事前質問を行った結果を
-表\ref{table:before-extra}に示す。
+実験対象者は計22人の10代-20代学生(男性6名:女性4名)であり,システム実験と同様の事前質問を行った結果を
+表\ref{table:before-extra}に示す.
 
 
 \begin{table}[H]
@@ -20,41 +20,41 @@
     
 \end{table}
 \section{実験設定の詳細}
-AIの強さは表\ref{table:param-system}における「弱いAI」モデルを使用した。
-また、システム実験における第一段階と同様に1回の実験当たりの制限時間は7分とし、実験内のAIとの対戦は2回までに制限した。
+AIの強さは表\ref{table:param-system}における「弱いAI」モデルを使用した.
+また,システム実験における第一段階と同様に1回の実験当たりの制限時間は7分とし,実験内のAIとの対戦は2回までに制限した.
 
 \subsection{振り返りモード(GUI)の詳細}
-GUIは主にシステム実験第一段階における二日目のGUIと類似している。
-ただし、図\ref{fig:extra}に示すように訪問回数「counts」の表記を廃止し、「value」と数字ボタンは「traj\&value」ボタンを
-押した際に出現する。
+GUIは主にシステム実験第一段階における二日目のGUIと類似している.
+ただし,図\ref{fig:extra}に示すように訪問回数「counts」の表記を廃止し,「value」と数字ボタンは「traj\&value」ボタンを
+押した際に出現する.
 \begin{figure}[t]
 	\centering
-    \includegraphics[width=\linewidth]{./figure/trajSystem.pdf}
-	\caption{進行図の提示(追加実験)}
+    \includegraphics[width=\linewidth]{./figure/extra.png}
+	\caption{GUI(追加実験)}
 	\label{fig:extra}
 \end{figure}
 
 \subsection{アルゴリズムの変更}
 追加実験では最も訪問回数$N(s, a)$が大きい行動$a_m$から派生する進行図と$a_m$から「最も遠い」行動$a_l$から派生する進行図と
-を表示する。
-「最も遠い」行動$a_l$は以下の手順によって定められる。また、アルゴリズムの疑似コードはAlgorithm\label{alg:myalg-add} に記載している。
+を表示する.
+「最も遠い」行動$a_l$は以下の手順によって定められる.また,アルゴリズムの疑似コードはAlgorithm\label{alg:myalg-add} に記載している.
 \begin{enumerate}
     \item 盤面$s$から派生する各行動$\{a_1, a_2, ..., a_n\}$に対して提案手法または比較手法による
-    軌道を収集する。その際に各行動に対して局面評価$Q(s, a)$と軌道の長さの平均$L(s, a)$を記録する。
-    \item 最も訪問回数$N(s, a)$が大きい行動$a_m$による局面評価を$v(=Q(s, a_m))$とする。
-    また、任意の閾値$l$に対して$\textrm{margin}_m(=l-L(s, a_m))$を計算する。
-    \item 局面評価の符号が$v$と異なる行動$\{a_{d_1}, a_{d_2}, ..., a_{d_k}\}$を取り出す。
-    \item $\{a_{d_1}, a_{d_2}, ..., a_{d_k}\}$内の各行動に対して$\textrm{margin}(=l-L(s, a))$を計算し、
-    $\textrm{margin}$の符号が$\textrm{margin}_m$と異なる行動$\{{a'}_{1}, {a'}_{2}, ..., {a'}_{k}\}$を取り出す。
+    軌道を収集する.その際に各行動に対して局面評価$Q(s, a)$と軌道の長さの平均$L(s, a)$を記録する.
+    \item 最も訪問回数$N(s, a)$が大きい行動$a_m$による局面評価を$v(=Q(s, a_m))$とする.
+    また,任意の閾値$l$に対して$\textrm{margin}_m(=l-L(s, a_m))$を計算する.
+    \item 局面評価の符号が$v$と異なる行動$\{a_{d_1}, a_{d_2}, ..., a_{d_k}\}$を取り出す.
+    \item $\{a_{d_1}, a_{d_2}, ..., a_{d_k}\}$内の各行動に対して$\textrm{margin}(=l-L(s, a))$を計算し,
+    $\textrm{margin}$の符号が$\textrm{margin}_m$と異なる行動$\{{a'}_{1}, {a'}_{2}, ..., {a'}_{k}\}$を取り出す.
     \item 取り出した行動のうち軌道の長さの平均$L(s, a)$が$L(s, a_m)$と最も遠い行動$a_l$を最適な行動$a_m$から最も遠い行動
-    とする。
+    とする.
 \end{enumerate}
-このアルゴリズムは状態$s$,最適な行動$a_m$から派生する局面評価$Q(s, a_m)$と予測される軌道の長さの平均$L(s, a_m)$が遠い行動を取り出している。
-つまり、「予測される勝敗」と「あとどのくらいでゲームが終了するか」の予想がなるべく$a_m$による予想と異なるものを取り出すことを意味している。
+このアルゴリズムは状態$s$,最適な行動$a_m$から派生する局面評価$Q(s, a_m)$と予測される軌道の長さの平均$L(s, a_m)$が遠い行動を取り出している.
+つまり,「予測される勝敗」と「あとどのくらいでゲームが終了するか」の予想がなるべく$a_m$による予想と異なるものを取り出すことを意味している.
 
-また、第4章の図\ref{fig:regroup}に記載したように、被験者に与える情報を可能な限り少なくする目的で取り出した進行図の軌道を末尾の3手で
-さらにグループ化し、提案手法において1組の状態$s$,行動$a$に対して閲覧できる進行図の数は3つまでとした。
-図\ref{fig:re-regroup}に再度、再グループ化の様子を示す。
+また,第4章の図\ref{fig:regroup}に記載したように,被験者に与える情報を可能な限り少なくする目的で取り出した進行図の軌道を末尾の3手で
+さらにグループ化し,提案手法において1組の状態$s$,行動$a$に対して閲覧できる進行図の数は3つまでとした.
+図\ref{fig:re-regroup}に再度,再グループ化の様子を示す.
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/regroup.pdf}
@@ -129,11 +129,11 @@ GUIは主にシステム実験第一段階における二日目のGUIと類似�
 
 
 \section{質問項目の詳細}
-質問項目は表\ref{table:query}に記載した質問に加え、「タスクの熟達度に関連する質問」として「振り返りでは対戦を振り返るのに十分な量の情報を受け取ることができたと思いますか」
-という質問を追加した。
+質問項目は表\ref{table:query}に記載した質問に加え,「タスクの熟達度に関連する質問」として「振り返りでは対戦を振り返るのに十分な量の情報を受け取ることができたと思いますか」
+という質問を追加した.
 \section{結果データ}
-第4章では先読みの手数ごとに結果データを集計した。ここでは他の観点から集計されたデータを示す。
-表\ref{table:system-all}に先読みの手数を分けずに合計した結果を示す。
+第4章では先読みの手数ごとに結果データを集計した.ここでは他の観点から集計されたデータを示す.
+表\ref{table:system-all}に先読みの手数を分けずに合計した結果を示す.
 \begin{table}[H]
     \caption{結果:総合}
     \scriptsize
@@ -152,9 +152,9 @@ GUIは主にシステム実験第一段階における二日目のGUIと類似�
     \label{table:system-all}
 \end{table}
 
-また、AIの強さごとに集計した結果を表\ref{table:system-strong}、表\ref{table:system-weak}に示す。
-表\ref{table:system-strong}に強いAIを用いて訓練した被験者のデータ、表\ref{table:system-weak}に
-弱いAIを用いて訓練した被験者のデータを示す。
+また,AIの強さごとに集計した結果を表\ref{table:system-strong},表\ref{table:system-weak}に示す.
+表\ref{table:system-strong}に強いAIを用いて訓練した被験者のデータ,表\ref{table:system-weak}に
+弱いAIを用いて訓練した被験者のデータを示す.
 \begin{table}[H]
     \caption{結果:AIの強さ(強い)}
     \scriptsize
@@ -190,7 +190,7 @@ GUIは主にシステム実験第一段階における二日目のGUIと類似�
     }
     \label{table:system-weak}
 \end{table}
-また、一日目のデータを表\ref{table:system-day1}、二日目のデータを表\ref{table:system-day2}に記載する。
+また,一日目のデータを表\ref{table:system-day1},二日目のデータを表\ref{table:system-day2}に記載する.
 \begin{table}[H]
     \caption{結果:一日目}
     \scriptsize

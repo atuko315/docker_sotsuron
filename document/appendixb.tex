@@ -1,7 +1,7 @@
 \chapter{各種アルゴリズムの詳細}
 \label{chap:alg}
 \section{提案手法のアルゴリズム}
-提案手法のアルゴリズムの疑似コードをAlgorithm\ref{alg:myalg-1}、Algorithm\ref{alg:myalg-2}に示す。
+提案手法のアルゴリズムの疑似コードをAlgorithm\ref{alg:myalg-1},Algorithm\ref{alg:myalg-2}に示す.
 \begin{algorithm}
     
     \caption{提案手法のアルゴリズム(part1)}
@@ -88,7 +88,7 @@
 \end{algorithm}
 
 \section{比較手法のアルゴリズム}
-比較手法の疑似コードをAlgorithm \ref{alg:compare}に示す。疑似コード中のTraverse()は Algorithm\ref{alg:myalg-2}と同一である。
+比較手法の疑似コードをAlgorithm \ref{alg:compare}に示す.疑似コード中のTraverse()は Algorithm\ref{alg:myalg-2}と同一である.
 \begin{algorithm}
     \caption{比較手法のアルゴリズム}
     \label{alg:compare}
@@ -121,14 +121,14 @@
 
 
 \section{提案手法におけるニューロ補間}
-第四章におけるデータ実験、システム実験ではいずれも手法のニューラルネットワークによる補間を行っている。
-第四章で示した疑似コードでは未探索のノードにたどり着いた際は走査を終了する。ニューラルネットワークによる補間とはこの場合、
-方策$P(s, a)$で訪問回数$N(s, a)$を代用し走査を継続することである。
-Algorithm\ref{alg:neuro}にニューロ補間を行う場合の疑似コードを示す（変更部分に下線）。
-比較手法に対してニューロ補間を行う場合も同様にTraverse()のコードを変更する。
+第四章におけるデータ実験,システム実験ではいずれも手法のニューラルネットワークによる補間を行っている.
+第四章で示した疑似コードでは未探索のノードにたどり着いた際は走査を終了する.ニューラルネットワークによる補間とはこの場合,
+方策$P(s, a)$で訪問回数$N(s, a)$を代用し走査を継続することである.
+Algorithm\ref{alg:neuro-1},Algorithm\ref{alg:neuro-2}にニューロ補間を行う場合の疑似コードを示す（変更部分に下線）.
+比較手法に対してニューロ補間を行う場合も同様にTraverse()のコードを変更する.
 \begin{algorithm}
     \caption{提案手法のアルゴリズム(ニューロ補間あり)part1}
-    \label{alg:neuro}
+    \label{alg:neuro-1}
     \small
     \begin{algorithmic}[1]       
         \Function{CollectBoards}{$s, a, l, k$}
@@ -176,6 +176,7 @@ Algorithm\ref{alg:neuro}にニューロ補間を行う場合の疑似コード�
 \end{algorithm}
 \begin{algorithm}
     \caption{提案手法のアルゴリズム(ニューロ補間あり)part2}
+    \label{alg:neuro-1}
     \begin{algorithmic}[1] 
         \Function {Traverse}{$s, \zeta(s_{start}, s)$}
         \State $s_{now} \gets s$
@@ -198,12 +199,12 @@ Algorithm\ref{alg:neuro}にニューロ補間を行う場合の疑似コード�
 \end{algorithm}
 \section{システム実験における提案手法の変更}
 \label{sec:fix}
-システム実験では画面の左下に盤面$s$の訪問回数$N(s)$と局面評価$V(s, a)$を表示する。このとき
-$V(s, a)$の絶対値（どちらのプレイヤーの勝利に近いか）と予想図の勝敗が異なる場合、ユーザーの混乱を招く可能性がある。
-そのため、提案手法では勝敗が$V(s, a)$の絶対値と一致する軌道を表示するように修正を施した。
-システム実験用に修正された疑似コードはAlgorithm:\ref{alg:system}となる。（下線が変更部分）
-また、提案手法により収集した最終盤面$S=\{s_{edge_1}, s_{edge_2}, ..., s_{edge_{k^l}}\}$は
-最終的に４つ以上連続してつながっている石の組み合わせ(fatal group)でグループ化し、最も要素数が多い集合の道筋をユーザーに提示した。
+システム実験では画面の左下に盤面$s$の訪問回数$N(s)$と局面評価$V(s, a)$を表示する.このとき
+$V(s, a)$の絶対値（どちらのプレイヤーの勝利に近いか）と予想図の勝敗が異なる場合,ユーザーの混乱を招く可能性がある.
+そのため,提案手法では勝敗が$V(s, a)$の絶対値と一致する軌道を表示するように修正を施した.
+システム実験用に修正された疑似コードはAlgorithm:\ref{alg:system}となる.（下線が変更部分）
+また,提案手法により収集した最終盤面$S=\{s_{edge_1}, s_{edge_2}, ..., s_{edge_{k^l}}\}$は
+最終的に４つ以上連続してつながっている石の組み合わせ(fatal group)でグループ化し,最も要素数が多い集合の道筋をユーザーに提示した.
 
 \begin{algorithm}
     \caption{提案手法のアルゴリズム(システム実験)}
