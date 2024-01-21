@@ -121,8 +121,8 @@
 
 
 \section{提案手法におけるニューロ補間}
-第四章におけるデータ実験,システム実験ではいずれも手法のニューラルネットワークによる補間を行っている.
-第四章で示した疑似コードでは未探索のノードにたどり着いた際は走査を終了する.ニューラルネットワークによる補間とはこの場合,
+第4章におけるデータ実験,システム実験ではいずれも手法のニューラルネットワークによる補間を行っている.
+第4章で示した疑似コードでは未探索のノードにたどり着いた際は走査を終了する.ニューラルネットワークによる補間とはこの場合,
 方策$P(s, a)$で訪問回数$N(s, a)$を代用し走査を継続することである.
 Algorithm\ref{alg:neuro-1},Algorithm\ref{alg:neuro-2}にニューロ補間を行う場合の疑似コードを示す（変更部分に下線）.
 比較手法に対してニューロ補間を行う場合も同様にTraverse()のコードを変更する.
@@ -182,7 +182,7 @@ Algorithm\ref{alg:neuro-1},Algorithm\ref{alg:neuro-2}にニューロ補間を行
         \State $s_{now} \gets s$
         \State $\zeta_r \gets \zeta(s_{start}, s)$
         \While {$s_{now}$が終了状態でない}
-            \If{$s$が未探索のとき}
+            \If{$s_{now}$が未探索のとき}
                 \State \underline{$a_t \gets \textrm{argmax}_a P(s_{now}, a)$}
             \Else
                 \State $a_t \gets \textrm{argmax}_a N(s_{now}, a)$
@@ -217,7 +217,7 @@ $V(s, a)$の絶対値（どちらのプレイヤーの勝利に近いか）と�
         \State $s_{now} \gets s$
         \State $\zeta_r \gets \zeta(s_{start}, s)$
         \While {$s_{now}$が終了状態でない}
-            \If{$s$が未探索のとき}
+            \If{$s_{now}$が未探索のとき}
                 \State \underline{$a_t \gets \textrm{argmax}_a P(s_{now}, a)$}
             \Else
                 \State $a_t \gets \textrm{argmax}_a N(s_{now}, a)$

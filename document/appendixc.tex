@@ -1,7 +1,7 @@
 \chapter{alphazero\_baseline}
 \label{chap:baseline}
 \section{ニューラルネットワーク}
-モデルの構成を図\fig{fig:baselineNetwork}に示す.
+モデルの構成を図\ref{fig:baselineNetwork}に示す.
 alphazero\_baselineにおける選択肢は列の数と等しい7であるため,1$\times$7の行列となる.
 例えば方策が
 $\left\{0, 0.1, 0.2, 0, 0, 0.7, 0.8\right\}$であるとき,方策中の最も大きい成分は7番目の0.8であるため,プレイヤーは次に７列目を選択する事が推奨される.
@@ -40,7 +40,7 @@ $\left\{0, 0.1, 0.2, 0, 0, 0.7, 0.8\right\}$であるとき,方策中の最も�
 	\label{table:param-train}
 \end{table}
 \section{alphazero\_baselineのパラメータ更新}
-alphazero\_baselineのパラメータ更新は第二章で述べた手順とほぼ同一であるがPUCTスコア$U(s, a)$の定義と$Q(s, a)$の更新則に差異がある。
+alphazero\_baselineのパラメータ更新は第2章で述べた手順とほぼ同一であるがPUCTスコア$U(s, a)$の定義と$Q(s, a)$の更新則に差異がある。
 $ C_{\textrm{cpuct}}$はハイパーパラメータである.
 ($N(s), N(s, a)はそれぞれs,(s, a)に対して探索を行った回数$)
 \begin{equation}
