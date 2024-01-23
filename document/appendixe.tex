@@ -2,7 +2,7 @@
 \label{chap:system}
 システム実験では全3回にわたる実験を行ったが追加実験ではシステムの実験の第1段階における1日目のみを実施した.
 \section{被験者のデータ}
-実験対象者は計22人の10代-20代学生(男性6名:女性4名)であり,システム実験と同様の事前質問を行った結果を
+実験対象者は計22人の大学生,大学院生(男性6名:女性4名)であり,システム実験と同様の事前質問を行った結果を
 表\ref{table:before-extra}に示す.
 
 
@@ -129,7 +129,7 @@ GUIは主にシステム実験第1段階における2日目のGUIと類似して
 
 
 \section{質問項目の詳細}
-質問項目は表\ref{table:query}に記載した質問に加え,「タスクの熟達度に関連する質問」として「振り返りでは対戦を振り返るのに十分な量の情報を受け取ることができたと思いますか」
+質問項目は表\ref{table:query}に記載した質問に加え,「タスクの熟達度に関連する質問(a)」として「振り返りでは対戦を振り返るのに十分な量の情報を受け取ることができたと思いますか」
 という質問を追加した.
 \section{結果データ}
 第4章では先読みの手数ごとに結果データを集計した.ここでは他の観点から集計されたデータを示す.
@@ -144,86 +144,11 @@ GUIは主にシステム実験第1段階における2日目のGUIと類似して
             質問の種類 & 質問の内容 & A & B \\ \hline 
             (a) & 振り返りによって成長したと感じましたか & 3.55 & \bf{3.86} \\
             & 振り返りによってAIの意図を掴むことができたと感じますか & 2.73 & \bf{3.32} \\
-            & (2回目のみ) 1回目に比べて成長したと感じますか & 3.36 & \bf{4.00} \\ \hline
+            & 振り返りでは対戦を振り返るのに十分な量の情報を受け取ることができたと思いますか & 3.36 & \bf{4.00} \\ \hline
             (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & 4.05 & \bf{4.27} \\
             & システムにより振り返りが楽しくなったと感じますか & 3.86 & \bf{4.33} \\
         \end{tabular}
     }
     \label{table:system-all}
 \end{table}
-
-また,AIの強さごとに集計した結果を表\ref{table:system-strong},表\ref{table:system-weak}に示す.
-表\ref{table:system-strong}に強いAIを用いて訓練した被験者のデータ,表\ref{table:system-weak}に
-弱いAIを用いて訓練した被験者のデータを示す.
-\begin{table}[H]
-    \caption{結果:AIの強さ(強い)}
-    \scriptsize
-    \centering
-    \resizebox{\linewidth}{!}{
-        \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{c}{主観評価} \\ \hline \hline
-            質問の種類 & 質問の内容 & A & B \\ \hline 
-            (a) & 振り返りによって成長したと感じましたか & 3.67 & \bf{3.82} \\
-            & 振り返りによってAIの意図を掴むことができたと感じますか & 2.58 & \bf{3.55} \\
-            & (2回目のみ) 1回目に比べて成長したと感じますか & 3.00 & \bf{4.00} \\ \hline
-            (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & 4.08 & \bf{4.64} \\
-            & システムにより振り返りが楽しくなったと感じますか & 3.75 & \bf{4.50} \\
-        \end{tabular}
-    }
-    \label{table:system-strong}
-\end{table}
-
-\begin{table}[H]
-    \caption{結果:AIの強さ(弱い)}
-    \scriptsize
-    \centering
-    \resizebox{\linewidth}{!}{
-        \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{c}{主観評価} \\ \hline \hline
-            質問の種類 & 質問の内容 & A & B \\ \hline 
-            (a) & 振り返りによって成長したと感じましたか & 3.8 & \bf{3.33} \\
-            & 振り返りによってAIの意図を掴むことができたと感じますか & 3.00 & 3.00 \\
-            & (2回目のみ) 1回目に比べて成長したと感じますか & 3.80 & \bf{4.00} \\ \hline
-            (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & \bf{4.00} & 3.80 \\
-            & システムにより振り返りが楽しくなったと感じますか & 4 & \bf{4.1} \\
-        \end{tabular}
-    }
-    \label{table:system-weak}
-\end{table}
-また,1日目のデータを表\ref{table:system-day1},2日目のデータを表\ref{table:system-day2}に記載する.
-\begin{table}[H]
-    \caption{結果:1日目}
-    \scriptsize
-    \centering
-    \resizebox{\linewidth}{!}{
-        \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{c}{主観評価} \\ \hline \hline
-            質問の種類 & 質問の内容 & A & B \\ \hline 
-            (a) & 振り返りによって成長したと感じましたか & 3.56 & \bf{3.78} \\
-            & 振り返りによってAIの意図を掴むことができたと感じますか & \bf{3.05} & 2.94 \\ \hline
-            (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & 4.06 & \bf{4.28} \\
-            & システムにより振り返りが楽しくなったと感じますか & 4.06 & \bf{4.28} \\
-        \end{tabular}
-    }
-    \label{table:system-day1}
-\end{table}
-
-\begin{table}[H]
-    \caption{結果:2日目}
-    \scriptsize
-    \centering
-    \resizebox{\linewidth}{!}{
-        \begin{tabular}{c|l||c|c}
-            \multicolumn{2}{c}{質問} & \multicolumn{2}{c}{主観評価} \\ \hline \hline
-            質問の種類 & 質問の内容 & A & B \\ \hline 
-            (a) & 振り返りによって成長したと感じましたか & 3.55 & \bf{3.91} \\
-            & 振り返りによってAIの意図を掴むことができたと感じますか & 2.45 & \bf{3.64} \\ 
-			& (2回目のみ) 1回目に比べて成長したと感じますか & 3.36 & \bf{4.00} \\ \hline
-            (b) & 今後も connect4 をプレイするときにこのシステムを使いたいと思いましたか & 4.00 & 4.18 \\
-            & システムにより振り返りが楽しくなったと感じますか & 3.91 & \bf{4.40} \\
-        \end{tabular}
-    }
-    \label{table:system-day2}
-\end{table}
-
 
