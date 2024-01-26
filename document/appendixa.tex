@@ -33,34 +33,9 @@ timeと$C_{puct}$，エポック数はいずれも値が大きい程モデルは
 	\caption{終了手数の分布}
 	\label{fig:stepCum}
 \end{figure}
-\section{評価指標の詳細}
 
-\subsection{group count}
-fcountはfatal groupの精度を示す2値(0または1)の指標である．
-\begin{equation}
-	{C_g = 1 \quad \textrm{If} \quad F_g \cap R_g \ne \phi \quad \textrm{Else} \quad 0}
-\end{equation}
-例外として$R_g=\phi$(引き分け)の場合，$F_g$も空集合であるならばgroup countは1となる．
-\subsection{stone count}
-stone countはfatal stoneの精度を示す．stone countの値域は[0, 1]である．
-(Count()は集合の要素数を数える関数)
-\begin{equation}
-	{\textrm{stone count} = \textrm{min}(\frac{\textrm{Count}(F_s \cap R_s)}{4}, 1)  }
-\end{equation}
-例外として$R_s=\phi$(引き分け)の場合，$F_s$も空集合であるならばstone countは1となる．
-\section{データ実験における提案指標の計測}
 
-\begin{enumerate}
-	\item 比較手法: 決定木の走査によりたどり着いた$F_s， F_g$によってstone count， group countを計算した
-	\item 提案手法: 第3章で述べたアルゴリズムによって収集された最終状態の集合$S=\{s_{edge_1}, s_{edge_2}, ..., s_{edge_{k^l}}\}$
-	    を指標ごとにグループ化する.
-		\begin{itemize}
-			\item group count: fatal groupによって$S$をグループ化してできた集合$\{S_{g_1}, S_{g_2}, ..., S_{g_n}\}$($S_{g_i}$は組み合わせ$g_i$がfatal groupとなっている盤面の集合)
-			を要素が多い順に2つ取り出す.抽出された2つの集合$\{S_{g_{m_1}}, S_{g_{m_2}}\}$における$\{g_{m_1}, g_{m_2}\}$で構成される集合を$F_g$とし，group countを計算した.
-			\item stone count: $g_{m_1}$を$F_s$とし，stone countを計算した.
-		\end{itemize}
-		
-\end{enumerate}
+
 
 \section{データ実験に使用したモデルの詳細}
 第4章に記載した表\ref{table:result-online}の結果を求める際に用いたモデルのパラメータを表\ref{table:param-data}に示す．
@@ -84,25 +59,25 @@ stone countはfatal stoneの精度を示す．stone countの値域は[0, 1]で�
 そのため本手法はモデルの構造とパラメータの値へのアクセスが可能な場合を想定したホワイトボックス的アプローチの実験であると言える．
 モデルのtime， $C_{puct}$の値を固定して同様の手法を適用した場合の実験結果を\ref{sec:gray}で示す．
 \section{末尾のグループ化}
-提案手法は予想図とその予想図に至る分岐(両方を合わせて進行図と記載)を抽出する．
-図\ref{fig:regroup}は分岐を末尾の3手で2つのグループに再編する様子を表している．(ここでは分岐は行動$a$の連続として表している)
+提案手法は予想図とその予想図に至る軌跡(両方を合わせて進行図と記載)を抽出する．
+図\ref{fig:regroup}は軌跡を末尾の3手で2つのグループに再編する様子を表している．(ここでは軌跡は行動$a$の連続として表している)
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/regroup.pdf}
 	\caption{再グループ化}
 	\label{fig:regroup}
 \end{figure}
-取り出された分岐を末尾の3手の選択でさらにグループ化した結果，元の分岐の数と再グループ化された分岐の数の平均は
+取り出された軌跡を末尾の3手の選択でさらにグループ化した結果，元の軌跡の数と再グループ化された軌跡の数の平均は
 表\ref{table:tail}のようになった．
-結果として，取り出された分岐のうち，平均約2$\sim$3つの分岐において末尾の3手が共通する傾向にあることがわかった．
+結果として，取り出された軌跡のうち，平均約2$\sim$3つの軌跡において末尾の3手が共通する傾向にあることがわかった．
 \begin{table}[H]
-	\caption{再グループ化した際の分岐の数}
+	\caption{再グループ化した際の軌跡の数}
     \scriptsize
     \label{table:tail}
 	\centering
 	\scalebox{0.98}[0.98]{
 		\begin{tabular}{c|c|c||c}
-			手数(盤面数, 補間の有無)&  再グループ化前の分岐数(平均)&  再グループ化後の分岐数(平均)\\ \hline
+			手数(盤面数, 補間の有無)&  再グループ化前の軌跡数(平均)&  再グループ化後の軌跡数(平均)\\ \hline
 			19-24(9862, 無)    & 7.01 & 3.00  \\
 			19-24(9862, 有)    & 13.62 & 4.43  \\
 			13-24(21022, 無)   &  6.95& 3.08  \\
@@ -114,16 +89,16 @@ stone countはfatal stoneの精度を示す．stone countの値域は[0, 1]で�
 
 	
 \end{table}
-また，各分岐の長さの平均は\ref{fig:length}のようになった．
-尚，正確には1つの盤面，行動(最も訪問回数が大きい行動)の組に対して取り出される軌道の平均を更に平均した値を示している．
+また，各軌跡の長さの平均は\ref{fig:length}のようになった．
+尚，正確には1つの盤面，行動(最も訪問回数が大きい行動)の組に対して取り出される軌跡の平均を更に平均した値を示している．
 \begin{table}[H]
-	\caption{分岐の長さの平均}
+	\caption{軌跡の長さの平均}
     \scriptsize
     \label{fig:length}
 	\centering
 	\scalebox{0.98}[0.98]{
 		\begin{tabular}{c|c}
-			手数(盤面数, 補間の有無)&  分岐の長さ(平均)\\ \hline
+			手数(盤面数, 補間の有無)&  軌跡の長さ(平均)\\ \hline
 		    0-40(61021,無)& 10.89\\
 		    0-40(61021,有)& 15.31\\
 		\end{tabular}
@@ -151,19 +126,19 @@ stone countはfatal stoneの精度を示す．stone countの値域は[0, 1]で�
 	\label{table:param-data-extra}
 \end{table}
 
-実験の結果は表\ref{table:result-offline}のようになった．第4章に記載したホワイトボックス的手法と同様に提案手法はgroup countにおいて比較手法より高い値を示した．
+実験の結果は表\ref{table:result-offline}のようになった．第4章に記載したホワイトボックス的手法と同様に提案手法はgroup prediction rateにおいて比較手法より高い値を示した．
 \begin{table}[H]
 	\caption{実験結果:データ実験}
 	\centering
 	\scalebox{0.98}[0.98]{
 		\begin{tabular}{c|c|c|c|c}
-			\multicolumn{1}{c}{} & \multicolumn{2}{|c|}{group count} 
-			& \multicolumn{2}{c|}{stone count}\\ \hline \hline
-			手数(盤面数, 補間の有無)    & 提案手法 & 比較手法 & 提案手法 & 比較手法 \\ \hline
-			19-24(9862, 無)    & \bf{0.60} & 0.44 & 0.61 & \bf{0.63} \\
-			19-24(9862, 有)    & \bf{0.63} & 0.44 & 0.61 & \bf{0.63}  \\
-			13-24(21022, 無)   & \bf{0.53} & 0.37 & 0.55 & \bf{0.56}  \\
-			13-24(21022, 有)   & \bf{0.55} & 0.37 & 0.55 & \bf{0.56}  \\
+			\multicolumn{1}{c}{} & \multicolumn{2}{|c|}{group prediction rate} 
+			& \multicolumn{2}{c|}{stone prediction rate}\\ \hline \hline
+			手数(盤面数, 補間の有無)  & 比較手法  & 提案手法 & 比較手法 & 提案手法  \\ \hline
+			19-24(9862, 無) & 0.44& \bf{0.60} & \bf{0.63}　& 0.61  \\
+			19-24(9862, 有)  & 0.44   & \bf{0.63}& \bf{0.63} & 0.61   \\
+			13-24(21022, 無)   & 0.37  & \bf{0.53}& \bf{0.56} & 0.55  \\
+			13-24(21022, 有)   & 0.37 & \bf{0.55}& \bf{0.56} & 0.55   \\
 		\end{tabular}
 	}
 	\label{table:result-offline}

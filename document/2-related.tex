@@ -63,7 +63,7 @@ AlphaZeroは先述の$V(s),Q(s, a)$を推定する際にニューラルネット
 	\caption{AlphaZeroネットワークの構造}
 	\label{fig:network}
 \end{figure}
-\paragraph{ニューラルネットワーク}
+\subsection{ニューラルネットワーク}
 AlphaZeroにおけるニューラルネットワークの構造を図\ref{fig:network}に示す．
 AlphaZero内のニューラルネットワークに対する入力は最新$8$ステップの盤面($\left\{ s_{-7}, ..., s_0 \right\}$,$s_{-i}$は$i$ステップ前の盤面，$s_{0}$は現在の盤面)であり，出力は方策$P(\left\{ s_{-7}, ..., s_0 \right\})$と
 局面評価$V(\left\{ s_{-7}, ..., s_0 \right\})$の2種類である．
@@ -72,12 +72,12 @@ AlphaZero内のニューラルネットワークに対する入力は最新$8$�
 方策内の値の大きさがAIによるその着手の評価と解釈され，成分が大きい座標を次に選択することが推奨される．\\
 また，局面評価$V(\left\{ s_{-7}, ..., s_0 \right\})$は「(過去7ステップ分の情報を含めた)現在の状況$s_0$は勝利に近いのか」を表現しており，値が上限に近ければ近い程，現在の状況$s_0$が次の着手を選択するプレイヤーにとっての勝利に近いことを表している．
 
-\paragraph{PV-モンテカルロ木探索}
+\subsection{PV-モンテカルロ木探索}
 PV-モンテカルロ木探索ではニューラルネットワークから得た方策$P(s)(以下s=\left\{ s_{-N+1}, ..., s_0 \right\}と表記する)$と局面評価$V(s)$をシミュレーション
 によって改善する．
 PV-モンテカルロ木探索ではシミュレーションによって$s$または$(s, a)$(状態と行動の組)をノード，各行動$a$を枝とした決定木を構築する．
 最終的に各ノード$s$から派生する各行動$\left\{a_1, a_2, ..., a_n\right\}$の探索回数の分布$N(s)(={N(s, a_1), N(s, a_2), ..., N(s, a_n)})$が改善された方策となる．
-一方，局面評価もまたモンテカルロ木探索により決定木が拡張されるなかで更新される．Algorithm\ref{alg:mcts-1}，Algorithm\ref{alg:mcts-2}に決定木と局面評価$V(s)$の詳細な更新アルゴリズムを示し，ここでは大まかな流れを示す．
+一方，局面評価もまたモンテカルロ木探索により決定木が拡張されるなかで更新される．付録BのAlgorithm\ref{alg:mcts-1}，Algorithm\ref{alg:mcts-2}に決定木と局面評価$V(s)$の詳細な更新アルゴリズムを示し，ここでは大まかな流れを示す．
 PV-MCTSのアルゴリズムの流れは以下の通りである．
 
 \begin{enumerate}
@@ -104,86 +104,14 @@ PV-MCTSのアルゴリズムの流れは以下の通りである．
 
 	
 このようなプロセスによって決定木を構築しつつ，モデルは対戦を行う．
-\newpage
-\begin{algorithm}
-    \caption{PV-MCTS in AlphaZero (Part 1: Exploration)}
-    \label{alg:mcts-1}
-    \begin{algorithmic}[1]
-        \State $t$: 決定木
-        \State $T$: 遷移関数
-        \State $N(s, a)$: $(s, a)$の組み合わせを探索した回数
-        \State $Q(s, a)$: 行動価値関数 
-        \State $W(s, a)$: 行動価値の総和$(W(s, a)=Q(s, a)N(s, a))$
-        \State $P(s, a)(=P(s_n), s_n=T(s, a))$: 
-        \State ニューラルネットワークから出力された方策
-        \State $V(s, a)(=V(s_n), s_n=T(s, a))$: 
-        \State ニューラルネットワークから出力された局面評価
-        \Function{Explore}{$s_{\text{start}}$}
-            \State Set $s_{now} = s_{start}$ and $a_{now} = a_m$
-            \For {each simulation}
-                \State $\zeta \gets \textrm{empty list}$
-                \State $s_{\text{current}} \gets s_{\text{start}}$
-                \While {$s_{\text{current}}$ がゲームの終了状態でない場合}
-                    \State $a_t \gets TreePolicy(s)$
-                    \State (Tは遷移関数)
-                    \State $(s_{\text{current}}, a_t)$を $\zeta $の末尾に追加
-                    \State $s_{\text{next}} \gets T(s_{\text{current}}, a_t)$
-                    \State $s_{\text{current}} \gets s_{\text{next}}$
-                    
-                \EndWhile
-                \State $G \gets V(s_e)$ 
-                \State($s_e$は$s_{start}$から探索してたどり着いたノード$s_e$)
-                \State \Call{Backpropagate}{$\zeta, G$}
-            \EndFor
-        \EndFunction
-        
-        
-    \end{algorithmic}
-\end{algorithm}
-\begin{algorithm}
-    \caption{PV-MCTS in AlphaZero (Part 2: Backpropagation)}
-    \label{alg:mcts-2}
-    \begin{algorithmic}[1]
-        \Function{TreePolicy}{$s$}
-            \If {$s$が探索されていない子ノードを持つとき}
-                \State $s_c \gets T(s, a)$ ($s_c$は未探索のノード)
-                \State \Call{InitNode}{$s_c$}
-                \State \Return $a$
-            \Else
-                \State 以下のPUCTスコア$U(s, a)$を計算
-                \State $U(s, a)= C(s)P(s, a)\frac{\sqrt{N(s)}}{1+N(s, a)}$
-                \State $C(s)=\textrm{log}\frac{1+N(s)+C_{\textrm{base}}}{C_{\textrm{base}}}+C_{\textrm{init}}$
-                \State($C_{\textrm{base}}$, $C_{\textrm{init}}$はハイパーパラメータ)
-                \State $(N(s)=\Gamma N(s, a))$
-                \State 以下のように$a$を求める
-                \State $a = {\textrm{argmax}}_a (Q(s, a)+U(s, a))$
-                \State \Return $a$
-                
-            \EndIf
-        \EndFunction
-        \Function{Backpropagate}{$\zeta, G$}
-            \For {each node-action pair $(s, a)$ in $\zeta$}
-                \State $N(s, a) \gets  N(s, a)+1$
-                \State $W(s, a) \gets  W(s, a)+G$
-                \State $Q(s, a) \gets \frac{W(s, a)}{N(s, a)}$
-            \EndFor
-        \EndFunction
-        \Function{InitNode}{$s$}
-            \For {each action $a$ from  $s$}
-                \State $N(s, a) \gets 0$
-                \State $W(s, a) \gets 0$
-                \State $Q(s, a) \gets 0$
-            \EndFor
-        \EndFunction
-    \end{algorithmic}
-\end{algorithm}
+
 
 
 \subsection{ボードゲームAIの問題点}
 AlphaZeroは当時の世界最高峰のAIであるチェスのStockFish\cite{StockFish}や将棋のelmo\cite{elmo}を凌ぐ性能を発揮した．
 それらの従来の有力なボードゲームAIは設計がそのゲーム固有の知識(ドメイン知識)に依存する割合が多かったため，
 「ある条件を満たすときにある選択をする」と言ったようにその挙動をルールの集合として解釈できる余地があった．その意味ではStockFIsh12やelmoはその設計が説明性を有していたといえる．
-一方で，AlphaZeroのニューラルネットワークと木探索を組み合わせた手法では方策と局面評価の根拠を得ることができない．つまりAlphaZeroの問題点として説明性の欠如が挙げられるのである．
+一方で，AlphaZeroのニューラルネットワークと木探索を組み合わせた手法では方策と局面評価の根拠を得ることができない．つまりAlphaZeroの問題点として説明性の欠如が挙げられる．
 2024年現在，StockFish，elmoの両者も人間の知識データへの依存を減じる方向に改良を続けており，性能と設計の説明性がトレードオフ関係にあると言える\cite{elmo}\cite{StockFish13}．
 説明性の欠如はAIの判断に対する責任の不在を意味し，システムのよりハイレベル，ハイリスクなタスクへの実用化に対する妨げとなっている．
 そのため，設計段階では説明性を持たないシステムに対して説明性を付加する手法を構築する必要がある．

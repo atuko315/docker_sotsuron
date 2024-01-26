@@ -1,5 +1,80 @@
 \chapter{各種アルゴリズムの詳細}
 \label{chap:alg}
+\section{PV-モンテカルロ木探索}
+PV-モンテカルロ木探索の疑似コードをAlgorithm\ref{alg:mcts-1}，Algorithm\ref{alg:mcts-2}に示す．
+\begin{algorithm}
+    \caption{PV-MCTS in AlphaZero (Part 1: Exploration)}
+    \label{alg:mcts-1}
+    \begin{algorithmic}[1]
+        \State $t$: 決定木
+        \State $T$: 遷移関数
+        \State $N(s, a)$: $(s, a)$の組み合わせを探索した回数
+        \State $Q(s, a)$: 行動価値関数 
+        \State $W(s, a)$: 行動価値の総和$(W(s, a)=Q(s, a)N(s, a))$
+        \State $P(s, a)(=P(s_n), s_n=T(s, a))$: 
+        \State ニューラルネットワークから出力された方策
+        \State $V(s, a)(=V(s_n), s_n=T(s, a))$: 
+        \State ニューラルネットワークから出力された局面評価
+        \Function{Explore}{$s_{\text{start}}$}
+            \State Set $s_{now} = s_{start}$ and $a_{now} = a_m$
+            \For {each simulation}
+                \State $\zeta \gets \textrm{empty list}$
+                \State $s_{\text{current}} \gets s_{\text{start}}$
+                \While {$s_{\text{current}}$ がゲームの終了状態でない場合}
+                    \State $a_t \gets TreePolicy(s)$
+                    \State (Tは遷移関数)
+                    \State $(s_{\text{current}}, a_t)$を $\zeta $の末尾に追加
+                    \State $s_{\text{next}} \gets T(s_{\text{current}}, a_t)$
+                    \State $s_{\text{current}} \gets s_{\text{next}}$
+                    
+                \EndWhile
+                \State $G \gets V(s_e)$ 
+                \State($s_e$は$s_{start}$から探索してたどり着いたノード$s_e$)
+                \State \Call{Backpropagate}{$\zeta, G$}
+            \EndFor
+        \EndFunction
+        
+        
+    \end{algorithmic}
+\end{algorithm}
+\begin{algorithm}
+    \caption{PV-MCTS in AlphaZero (Part 2: Backpropagation)}
+    \label{alg:mcts-2}
+    \begin{algorithmic}[1]
+        \Function{TreePolicy}{$s$}
+            \If {$s$が探索されていない子ノードを持つとき}
+                \State $s_c \gets T(s, a)$ ($s_c$は未探索のノード)
+                \State \Call{InitNode}{$s_c$}
+                \State \Return $a$
+            \Else
+                \State 以下のPUCTスコア$U(s, a)$を計算
+                \State $U(s, a)= C(s)P(s, a)\frac{\sqrt{N(s)}}{1+N(s, a)}$
+                \State $C(s)=\textrm{log}\frac{1+N(s)+C_{\textrm{base}}}{C_{\textrm{base}}}+C_{\textrm{init}}$
+                \State($C_{\textrm{base}}$, $C_{\textrm{init}}$はハイパーパラメータ)
+                \State $(N(s)=\Gamma N(s, a))$
+                \State 以下のように$a$を求める
+                \State $a = {\textrm{argmax}}_a (Q(s, a)+U(s, a))$
+                \State \Return $a$
+                
+            \EndIf
+        \EndFunction
+        \Function{Backpropagate}{$\zeta, G$}
+            \For {each node-action pair $(s, a)$ in $\zeta$}
+                \State $N(s, a) \gets  N(s, a)+1$
+                \State $W(s, a) \gets  W(s, a)+G$
+                \State $Q(s, a) \gets \frac{W(s, a)}{N(s, a)}$
+            \EndFor
+        \EndFunction
+        \Function{InitNode}{$s$}
+            \For {each action $a$ from  $s$}
+                \State $N(s, a) \gets 0$
+                \State $W(s, a) \gets 0$
+                \State $Q(s, a) \gets 0$
+            \EndFor
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
 \section{提案手法のアルゴリズム}
 提案手法のアルゴリズムの疑似コードをAlgorithm\ref{alg:myalg-1}，Algorithm\ref{alg:myalg-2}に示す．
 \begin{algorithm}
@@ -11,7 +86,7 @@
         \State $T$: 状態遷移関数
         \State $l$: 盤面の収集を行う手数
         \State $k$: 一度に集める盤面の数
-        \State $\zeta(s, s')$: ノード$s$から$s'$までの軌道
+        \State $\zeta(s, s')$: ノード$s$から$s'$までの軌跡
         
        
         \Function{MyAlgorithm}{$s_{start}, a, l, k$}
@@ -26,7 +101,7 @@
            \EndFor
            \State 収集された終了状態の集合$S(=\{s_{edge_1},s_{edge_2}, ..., s_{edge_{k^l}}\})$を任意の共通項$c$で副集合$\{S_1, S_2, ..., S_q\}$に分割する
            \State 最も要素数の多い副集合$S_{max}$中の各要素$\{s_{e_1}, s_{e_2}, ...,  s_{e_u}\}$
-           \State に対応する軌道の集合$Z_{max}(=\{\zeta(s_{start}, s_{e_1}), \zeta(s_{start}, s_{e_2}), ..., \zeta(s_{start}, s_{e_u})\})$を保存
+           \State に対応する軌跡の集合$Z_{max}(=\{\zeta(s_{start}, s_{e_1}), \zeta(s_{start}, s_{e_2}), ..., \zeta(s_{start}, s_{e_u})\})$を保存
            \State \Return $Z_{max}$
         \EndFunction
     \end{algorithmic}
@@ -95,7 +170,7 @@
     \begin{algorithmic}[1]       
         \State $t$: 手法を適用する探索木
         \State $T$: 状態遷移関数
-        \State $\zeta(s, s')$: ノード$s$から$s'$までの軌道
+        \State $\zeta(s, s')$: ノード$s$から$s'$までの軌跡
         \Function{CompareAlgorithm}{$s, a$}
            \State $s_n \gets T(s, a)$
            \State $\zeta(s, s_n) \gets \{s, a, s_n\}$
@@ -121,7 +196,7 @@
 
 
 \section{提案手法におけるニューロ補間}
-第4章におけるデータ実験，システム実験ではいずれも手法のニューラルネットワークによる補間を行っている．
+第4章におけるデータ実験，インタフェース実験ではいずれも手法のニューラルネットワークによる補間を行っている．
 第4章で示した疑似コードでは未探索のノードにたどり着いた際は走査を終了する．ニューラルネットワークによる補間とはこの場合，
 方策$P(s, a)$で訪問回数$N(s, a)$を代用し走査を継続することである．
 Algorithm\ref{alg:neuro-1}，Algorithm\ref{alg:neuro-2}にニューロ補間を行う場合の疑似コードを示す（変更部分に下線）．
@@ -176,7 +251,7 @@ Algorithm\ref{alg:neuro-1}，Algorithm\ref{alg:neuro-2}にニューロ補間を�
 \end{algorithm}
 \begin{algorithm}
     \caption{提案手法のアルゴリズム(ニューロ補間あり)part2}
-    \label{alg:neuro-1}
+    \label{alg:neuro-2}
     \begin{algorithmic}[1] 
         \Function {Traverse}{$s, \zeta(s_{start}, s)$}
         \State $s_{now} \gets s$
@@ -197,17 +272,17 @@ Algorithm\ref{alg:neuro-1}，Algorithm\ref{alg:neuro-2}にニューロ補間を�
         
     \end{algorithmic}
 \end{algorithm}
-\section{システム実験における提案手法の変更}
+\section{インタフェース実験における提案手法の変更}
 \label{sec:fix}
-システム実験では画面の左下に盤面$s$の訪問回数$N(s)$と局面評価$V(s, a)$を表示する．このとき
+インタフェース実験では画面の左下に盤面$s$の訪問回数$N(s)$と局面評価$V(s, a)$を表示する．このとき
 $V(s, a)$の絶対値（どちらのプレイヤーの勝利に近いか）と予想図の勝敗が異なる場合，ユーザーの混乱を招く可能性がある．
-そのため，提案手法では勝敗が$V(s, a)$の絶対値と一致する軌道を表示するように修正を施した．
-システム実験用に修正された疑似コードはAlgorithm:\ref{alg:system}となる．（下線が変更部分）
+そのため，提案手法では勝敗が$V(s, a)$の絶対値と一致する軌跡を表示するように修正を施した．
+インタフェース実験用に修正された疑似コードはAlgorithm:\ref{alg:system}となる．（下線が変更部分）
 また，提案手法により収集した最終盤面$S=\{s_{edge_1}, s_{edge_2}, ..., s_{edge_{k^l}}\}$は
-最終的に４つ以上連続してつながっている石の組み合わせ(fatal group)でグループ化し，最も要素数が多い集合の道筋をユーザーに提示した．
+最終的に４つ以上連続してつながっている石の組み合わせ(fatal group)でグループ化し，最も要素数が多い集合の軌跡をユーザーに提示した．
 
 \begin{algorithm}
-    \caption{提案手法のアルゴリズム(システム実験)}
+    \caption{提案手法のアルゴリズム(インタフェース実験)}
     \label{alg:system}
     \begin{algorithmic}[1]       
         
