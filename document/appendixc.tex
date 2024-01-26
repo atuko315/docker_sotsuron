@@ -1,29 +1,29 @@
 \chapter{alphazero\_baseline}
 \label{chap:baseline}
 \section{ニューラルネットワーク}
-モデルの構成を図\ref{fig:baselineNetwork}に示す.
-alphazero\_baselineにおける選択肢は列の数と等しい7であるため,1$\times$7の行列となる.
+モデルの構成を図\ref{fig:baselineNetwork}に示す．
+alphazero\_baselineにおける選択肢は列の数と等しい7であるため，1$\times$7の行列となる．
 例えば方策が
-$\left\{0, 0.1, 0.2, 0, 0, 0.7, 0.8\right\}$であるとき,方策中の最も大きい成分は7番目の0.8であるため,プレイヤーは次に７列目を選択する事が推奨される.
+$\left\{0, 0.1, 0.2, 0, 0, 0.7, 0.8\right\}$であるとき，方策中の最も大きい成分は7番目の0.8であるため，プレイヤーは次に７列目を選択する事が推奨される．
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/baselineNetwork.png}
 	\caption{alphazero\_baselineネットワークの構成}
 	\label{fig:baselineNetwork}
 \end{figure}
-また,モデルの訓練過程は以下のステップをまとめて1エポックとした繰り返しによって構成されている.
-使用したテストデータ\cite{dataset}はα-β木探索によるconnect4の解から生成されている\cite{scoring}.
+また，モデルの訓練過程は以下のステップをまとめて1エポックとした繰り返しによって構成されている．
+使用したテストデータ\cite{dataset}はα-β木探索によるconnect4の解から生成されている\cite{scoring}．
 \begin{enumerate}
 	\item 500ゲーム分の自己対戦を行う
 	\item 自己対戦によって収集した盤面を入力としてネットワークを訓練
     \item ネットワークを教師データによって評価
     \item 新しいネットワークを用いたAIと訓練前の最善のネットワークを用いたAIによる対戦を50ゲーム分行い6割以上
-    の勝率を記録した場合,新しいネットワーク最善のネットワークとして保存する
+    の勝率を記録した場合，新しいネットワーク最善のネットワークとして保存する
 
 \end{enumerate}
-本論文の第3章におけるシステム実験で用いた「強いAI」のニューラルネットワークは上記をステップを200エポック分実行して訓練されたモデルを使用している.
+本論文の第3章におけるシステム実験で用いた「強いAI」のニューラルネットワークは上記をステップを200エポック分実行して訓練されたモデルを使用している．
 
-また,ネットワーク訓練時のパラメータの値を\ref{table:param-train}に示す.
+また，ネットワーク訓練時のパラメータの値を\ref{table:param-train}に示す．
 \begin{table}[H]
 	\caption{ネットワーク訓練時のパラメータ名と値}
 	\centering
@@ -40,21 +40,21 @@ $\left\{0, 0.1, 0.2, 0, 0, 0.7, 0.8\right\}$であるとき,方策中の最も�
 	\label{table:param-train}
 \end{table}
 \section{alphazero\_baselineのパラメータ更新}
-alphazero\_baselineのパラメータ更新は第2章で述べた手順とほぼ同一であるがPUCTスコア$U(s, a)$の定義と$Q(s, a)$の更新則に差異がある。
-$ C_{\textrm{cpuct}}$はハイパーパラメータである.
+alphazero\_baselineのパラメータ更新は第2章で述べた手順とほぼ同一であるがPUCTスコア$U(s, a)$の定義と$Q(s, a)$の更新則に差異がある．
+$ C_{\textrm{cpuct}}$はハイパーパラメータである．
 ($N(s), N(s, a)はそれぞれs,(s, a)に対して探索を行った回数$)
 \begin{equation}
 	{U(s, a)= C_{\textrm{cpuct}}P(s, a)\frac{\sqrt{N(s)}}{1+N(s, a)}\\
 	}
 \end{equation}
 
-$Q(s, a)$は以下のように更新される.
+$Q(s, a)$は以下のように更新される．
 ($s_cは現在の探索ノードsから見た最もPUCTスコアU(s, a)とQ(s, a)の和の高い子ノード$)
 \begin{equation}
 	{Q(s, a)=\frac{N(s, a)Q(s, a)+V(s_c)}{N(s, a)+1}\\
 	}
 \end{equation}
-これらの変更を加えたalphazero\_baselineにおけるPV-MCTSのアルゴリズムをAlgorithm\ref{alg:base}に示す.
+これらの変更を加えたalphazero\_baselineにおけるPV-MCTSのアルゴリズムをAlgorithm\ref{alg:base}に示す．
 \newpage
 
 \begin{algorithm}
