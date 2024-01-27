@@ -12,7 +12,7 @@
 $s$に対する主体の行動$a$によって環境の次の状態${s'}(=T(s, a), Tは遷移関数)$と主体が獲得する報酬$r$が決定されると仮定する．
 その仮定の下，環境から主体に与えられる報酬の合計$G$($=\Sigma r$以下収益と記載)を最大化することを目標とする．
 報酬を大きくするためには各状態$s$に応じて適切な(より大きな報酬をもらえる可能性が高い)行動を選択する必要がある．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/RL.png}
 	\caption{強化学習}
@@ -39,14 +39,14 @@ Temporary Difference法やMonte Carlo法等が基本的な$V(s),Q(s, a)$の更�
 また，上述した強化学習における状態価値関数$V(s)$の推定は「ある盤面はプレイヤーにとって勝利に近いのか」を表現していると解釈され，行動価値関数$Q(s, a)$は「ある盤面である行動をした場合のプレイヤーの勝率」を表していると解釈される．
 AlphaGo\cite{AlphaGo}やStockFish\cite{StockFish12}，DeepLearningShogi\cite{dlshogi}では状態$s$は最新$N$ステップの盤面と手数などのゲームのプレイにおいて重要な情報である．
 状態は行列等の形式に抽象化され，行動は次にプレイヤーが打つ箇所の座標となる．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\includegraphics[width=\linewidth]{./figure/transition.png}
 	\caption{ボードゲームにおける強化学習モデル}
 	\label{fig:board-game-model}
 \end{figure}
 
 また，図\ref{fig:connect4-symbol}に示すように本論文で使用したalphazero\_baselineモデル\cite{baseline}における入力は最新の盤面の状態を空白を0，先番(赤)の石の位置を1，後番（黄）の位置を-1として抽象化した6$\times$7の行列となる．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/symbolic.png}
 	\caption{connect4盤面の状態表現}
@@ -57,7 +57,7 @@ AlphaGo\cite{AlphaGo}やStockFish\cite{StockFish12}，DeepLearningShogi\cite{dls
 \subsection{AlphaZero}
 AlphaZeroは2016年に登場し，囲碁の元世界チャンピオンであるイ，セドルに対して4勝一敗の成績を収めたAlphaGoの汎用版であり，囲碁，将棋，チェスなどの主要なボードゲームにおいて人間の実力を凌駕したパフォーマンスを誇る．
 AlphaZeroは先述の$V(s),Q(s, a)$を推定する際にニューラルネットワークとPV-モンテカルロ木探索アルゴリズムと呼ばれるモンテカルロ木探索アルゴリズムの変種を使用する．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/network.png}
 	\caption{AlphaZeroネットワークの構造}
@@ -165,7 +165,7 @@ Mishraらの研究\cite{whyNot}では医療タスクにおけるニューラル�
 これらの強化学習，木構造ネットワークに対するconstrative explanationの手法は決定木上の「最も有力な」「単一の」予想図を用いることを前提としている．
 そのため第3章でしめす提案手法では決定木上の複数の予想図を用いたconstrative explanationの実現を試みた．
 
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/contrastive.png}
 	\caption{contrastive explanation}
@@ -176,6 +176,7 @@ Mishraらの研究\cite{whyNot}では医療タスクにおけるニューラル�
 Torrayらの研究\cite{imp2013}やAmirらの研究\cite{imp2016}では状態の重要度$I(s)$を1つ先の行動価値関数$Q(s, a)$が次の選択によって大きく左右されるような状態を重要度の高い局面として定義している．
 $Q(s, a)$の揺らぎの捉え方にはいくつかの方式が存在し，
 Torrayらは$I(s)$を$s$から辿り着きうる最善の$Q(s, a)$と最悪の$Q(s, a)$の差として定義している．
+
 \begin{equation}
 	{I(s)= \textrm{max}Q(s, a)-\textrm{worst}Q(s, a)}
 \end{equation}
@@ -184,13 +185,14 @@ Amirらは$I(s)$を$s$から辿り着きうる最善の$Q(s, a)$と2番目に値
     \label{imp}
 	{I(s)= \textrm{max}Q(s, a)-\textrm{secondMax}Q(s, a)}
 \end{equation}
-しかし，これらの定義はimpが$Q(s, a)$の値が低くなるような行動$a$に大きく影響されるリスクや，図\ref{fig:symmetry}のように状態に対称性があるような場合に重要度が過度に小さくなってしまうリスクがある．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=200pt]{./figure/symmetry.png}
 	\caption{対称性がある盤面の例}
 	\label{fig:symmetry}
 \end{figure}
+しかし，これらの定義はimpが$Q(s, a)$の値が低くなるような行動$a$に大きく影響されるリスクや，図\ref{fig:symmetry}のように状態に対称性があるような場合に重要度が過度に小さくなってしまうリスクがある．
+
 また，Guoらの研究\cite{EDGE}は重要度$I$を収益$G$が確定するまでの一連の流れ（エピソード）やエピソード内の時点$t$の重要度を収益$G$との関連度の大きさから多角的に定めている．
 しかし，Guoらの定義は状態の符号化や回帰などのデータの加工段階が多く，指標自体の説明性に疑問が残る．AIモデルに対して説明を加える際にはその手法自体もなるべく簡明であり，勝敗に直結している方が望ましいと考えられる．
 

@@ -11,7 +11,7 @@
 本手法はある状態$s$と行動$a$の組に対してAIが予想する未来図$O(s)$とそこに至るまでの軌跡の集合を取り出し，その傾向を見出すことによるAIの判断
 の意図を可視化を目標とする．
 以降は未来図$O(s)$と走査が$O(s)$に至るまでに通過したノードの履歴(軌跡)$\zeta(s, O(s))$を合わせて進行図と記載する．
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{./figure/mabs.png}
     \caption{提案手法の概要}
@@ -56,21 +56,21 @@
 \end{enumerate}
 
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{./figure/1-2.png}
     \caption{提案アルゴリズムの概要(step1$\sim$ 2)}
     \label{fig:step1-2}
 \end{figure}
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{./figure/3-4.png}
     \caption{提案アルゴリズムの概要(step3$\sim $4)}
     \label{fig:step3-4}
 \end{figure}
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=300pt]{./figure/traj-example.png}
+    \includegraphics[width=200pt]{./figure/traj-example.png}
     \caption{軌跡の例}
     \label{fig:traj-example}
 \end{figure}
@@ -79,7 +79,7 @@
 共通する傾向や法則性を見出せるというメリットが存在する．これは第2章で述べたような最も可能性が高い1つの軌跡を示す，といったような情報が単一である従来の手法には不可能である．
 提案手法の疑似コードは付録\ref{chap:alg}に記載している．
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \includegraphics[width=400pt]{./figure/merit.png}
 	\caption{提案手法と既存手法}
 	\label{fig:merit}
@@ -108,7 +108,7 @@ connect4の一般的なボードの広さは$6\times7$であり$6\times7$のコ�
 Tromp\cite{data}によるconnect4の$\alpha-\beta$木探索によって導かれた各盤面の最善手とそのデータも一般に公開されている．
 また，connect4は盤上に全ての情報が開示されており，結果もどちらか一方の勝利または引き分けのみであるため2人ゼロ和完全情報ゲーム\cite{gairon}に分類される．
 本論文の実験において提案手法をconnect4に適用する際には最終盤面において4つ以上並んでいる石の座標を特徴として用いた．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
     \includegraphics[width=\linewidth]{./figure/connect4.png}
 	\caption{connect4}
@@ -120,7 +120,7 @@ alphazero\_baselineはalphaZeroをconnect4用に簡易的に模したネット�
 局面評価は第2章の強化学習の段で記載した状態価値関数と同一の変数であり，
 入力に対する評価を表しており，1が入力の手番のプレイヤーにとっての勝利，-1が敗北の予想を表している．
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
     \includegraphics[trim={0cm 0cm 0cm 0cm},clip]{./figure/baseline.png}
 
@@ -134,20 +134,21 @@ alphazero\_baselineはalphaZeroをconnect4用に簡易的に模したネット�
 また，ゲームのルールより収集される最終状態では図\ref{fig:application}の下部のように4つ以上並んだ石が存在する．
 第4章で詳しく述べるように，実験では4つ以上並んだ石の位置で最終状態をグループ化した．図\ref{fig:application}においては石が左下から右斜め上方向に4つ並んでいる盤面
 が最も多いため，赤線で囲われた盤面とそこにいたるまでの軌跡が保存される．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/application.png}
 	\caption{提案手法のconnect4への適用}
-	\label{fig:double}
+	\label{fig:application}
 \end{figure}
 
 提案手法により生成される進行図を図\ref{fig:double}に示す．
 先述のように進行図は予測図と軌跡で構成されている．connect4では盤面$s$と行動$a$を選んだ際の次の状態$s_{next}$は$(s, a)$に対して一意に決定される．
 そのため，軌跡$\rm{{\zeta}_{s_{e_i}}}$は$s_{start}$から$s_{e_i}$に至るまでに取った行動$a$の集合とした．各行動は選択した列のインデックスで$1\sim7$の数字として
 表現される．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/double.png}
 	\caption{connect4における進行図}
 	\label{fig:double}
 \end{figure}
+\pagebreak

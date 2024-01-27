@@ -27,7 +27,7 @@ timeと$C_{puct}$，エポック数はいずれも値が大きい程モデルは
 また，ゲームごとの手数は75\%のゲームが36手以内で終了している．
 そのため，データ実験ではゲームの中盤と言える13$\sim$24手目のデータを使用した．
 図\ref{fig:stepCum}にゲームの終了手数の累計グラフを示す．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/stepCum.png}
 	\caption{終了手数の分布}
@@ -61,7 +61,7 @@ timeと$C_{puct}$，エポック数はいずれも値が大きい程モデルは
 \section{末尾のグループ化}
 提案手法は予想図とその予想図に至る軌跡(両方を合わせて進行図と記載)を抽出する．
 図\ref{fig:regroup}は軌跡を末尾の3手で2つのグループに再編する様子を表している．(ここでは軌跡は行動$a$の連続として表している)
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/regroup.pdf}
 	\caption{再グループ化}

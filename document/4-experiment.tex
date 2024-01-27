@@ -19,7 +19,7 @@ alphazero\_baselinモデル同士の対戦データ2000局分(盤面数:61049)�
 それぞれが，最終盤面において4つ以上連続して並ぶ石と組み合わせ(以下fatal stone，fatal groupと記載)の座標に対する予測精度を表している．
 
 本論文が提案する提案指標(group prediction rate， stone prediction rate)の計算において，盤面の座標は図\ref{fig:index}のように定められる．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=300pt]{./figure/index.png}
 	\caption{盤面の座標番号}
@@ -27,7 +27,7 @@ alphazero\_baselinモデル同士の対戦データ2000局分(盤面数:61049)�
 \end{figure}
 図\ref{fig:fatalGroup}のようにゲームの終了状態において，４つ以上連続してつながっている石の座標$F_s$(fatal stoneの集合)とその組み合わせ$F_g$(fatal groupの集合)を記録する．
 図\ref{fig:fatalGroup}の盤面は$\{17, 18, 19, 20, 24, 31, 38\}$の7つのfatal stoneと$\{[17, 18, 19, 20], [17, 24, 31, 38]\}$の2つのfatal groupを持つ．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/fatalGroup.png}
 	\caption{fatalStoneとfatalGroup}
@@ -53,7 +53,8 @@ stone prediction rateはfatal stoneの予測精度を示す．stone prediction r
 
 
 例えば，実際の結果と予測結果が図\ref{fig:cal-compare}の様になる場合， $R_g$と$F_g$は$[17, 24, 31, 38]$が共通しているためgroup prediction rateは1， stone prediction rateは$\frac{4}{4}=1$となる．
-\begin{figure}[t]
+\pagebreak
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/cal-compare.png}
 	\caption{予測結果の例}
@@ -70,7 +71,7 @@ stone prediction rateはfatal stoneの予測精度を示す．stone prediction r
 	\item 提案手法: 集めた盤面における4つ繋がっている石を集計し，最も出現頻度が高いfatal group を$F_s$， 2番目までに出現頻度が高いfatal groupを$F_g$として用いる．組み合わせを2つ記録する理由は下の図のように最終的に繋がっている組み合わせが2つある可能性を考慮するためである．
 \end{itemize}
 図\ref{fig:compare}は比較手法と提案手法の概要を示している．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/compare-image.png}
 	\caption{提案手法と比較手法の比較}
@@ -78,7 +79,7 @@ stone prediction rateはfatal stoneの予測精度を示す．stone prediction r
 \end{figure}
 また，提案手法による予測が図\ref{fig:g-example}のようになる場合，$[1,2,3,4]$が最も多く含まれているfatal group
 であり，2番目は$[1, 9, 17, 25]$である．そのため，提案手法全体による予測結果は$F_g=\{[1, 2, 3, 4], [1, 9, 17, 25]\}， F_s=\{1, 9, 17, 25\}$となる．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/g-example.png}
 	\caption{提案手法による予測}
@@ -137,7 +138,7 @@ stone prediction rateはfatal stoneの予測精度を示す．stone prediction r
 提案手法の人間に対する有効性を示すため以下のように自作したconnect4の学習支援システムを用いて実験を行った．
 自作システムの開始画面は\ref{fig:basic}のように構成されており，右側の青い正方形の部分をクリックすることでconnect4をプレイできる．
 実験対象者は大学生，大学院生の22名(男性17名:女性5名)となった．
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
     \setlength{\fboxsep}{1pt} % フレームの余白を調整
     \setlength{\fboxrule}{1pt} % フレームの太さを調整
@@ -168,7 +169,7 @@ AIによる進行図を閲覧できる．進行図は提案手法または比較
 また，「振り返りモード」は第3章で定義した重要度$I(s)$が最も高い地点から開始する．
 
 実験の際には被験者をグループA(提案手法による進行図を見せるグループ)とグループB(比較手法による進行図を見せるグループ)に分類した．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
     \setlength{\fboxsep}{1pt} % フレームの余白を調整
     \setlength{\fboxrule}{1pt} % フレームの太さを調整
@@ -178,7 +179,7 @@ AIによる進行図を閲覧できる．進行図は提案手法または比較
 \end{figure}
 数字が描かれたボタンは列のインデックスを表しており，図\ref{fig:trajSystem}に示すように各ボタンを押した際にその列を選択した場合の想定図と局面評価を確認できる．
 図\ref{fig:trajSystem}では「4」と描かれたボタンを押したため4列目を選択した場合の進行図が表示されている．
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{./figure/4-traj.png}
 	\caption{進行図の表示}
@@ -194,7 +195,7 @@ AIによる進行図を閲覧できる．進行図は提案手法または比較
 進行図で提示される先読みの手数ごとに主観評価の平均値($1\sim5$)を表\ref{table:system-3}， 表\ref{table:system-5}， 表\ref{table:system-7}， 表\ref{table:system-100}に示す．
 先読みの手数は${3, 5, 7, \textrm{制限なし}}$の4種類であり，先読みの手数ごとに図\ref{fig:see}に示すように提示される進行図中の手数が変化する．
 先読みの手数に関わらず，AIが予測する進行において最終的に4つ以上の石が並ぶ座標は強調表示される．
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{./figure/see.png}
 	\caption{進行図の表示}
@@ -276,7 +277,7 @@ t検定を行ったが，いずれも有意な差は見当たらなかった．
 付録Dに示すように被験者1人に対して2回対戦を行った．結果として示すscoreは勝利を1，敗北を-1，引き分けを0
 とした2回の対戦の平均値として定義される．
 提案手法を用いて訓練を行ったグループ(A)は比較手法を用いて訓練を行ったグループ(B)よりも高い
-勝率を記録し，scoreはマン・ホイットニーのU検定において有意な差を示した．
+勝率を記録した.
 \begin{table}[H]
 	\caption{対戦の結果(インタフェース実験)}
     \label{table:result-battle}
@@ -284,7 +285,7 @@ t検定を行ったが，いずれも有意な差は見当たらなかった．
 	\scalebox{0.98}[0.98]{
 		\begin{tabular}{c|c|c}
             グループ & B(比較手法)  & A(提案手法) \\ \hline
-			mean score &  -0.15*   & \bf{0.25*}\\ \hline
+			mean score &  -0.15   & \bf{0.15}\\ \hline
 		\end{tabular}
 	}
 	
@@ -371,16 +372,17 @@ t検定を行ったが，いずれも有意な差は見当たらなかった．
 先読みを1$\sim$5手として再実験を行った．
 インタフェース実験では補助として提示した訪問回数，局面評価に注目する被験者が多く見られたため，訪問回数「count」(訪問回数)の表示を廃止し，「value」(局面評価)と進行図の閲覧は被験者の手番（先番）となる盤面でのみ可能とした．
 
-結果を\ref{fig:add-result}に示す．
+結果を\ref{table:add-result}に示す．
 
 \begin{table}[H]
     \caption{先読み手数制限なしの場合(追加実験)}
+    \label{table:add-result}
     \scriptsize
     \centering
     \resizebox{\linewidth}{!}{
         \begin{tabular}{c|l||c|c}
             \multicolumn{2}{c}{質問} & \multicolumn{2}{c}{主観評価} \\ \hline \hline
-            質問の種類 & 質問の内容& B & A  \\ \hline 
+            質問の種類 & 質問の内容& B(比較手法) & A (提案手法) \\ \hline 
             (a) & 振り返りによって成長したと感じましたか& \bf{3.80} & 3.00  \\
             & 振り返りによってAIの意図を掴むことができたと感じますか& 2.80 & \bf{3.00} \\
             & 振り返りでは対戦を振り返るのに十分な量の情報を受け取ることができたと思いますか& 3.00 & \bf{3.60}  \\ \hline
@@ -388,7 +390,7 @@ t検定を行ったが，いずれも有意な差は見当たらなかった．
             & システムにより振り返りが楽しくなったと感じますか& \bf{4.20} & 3.6  \\
         \end{tabular}
     }
-    \label{table:add-result}
+    
 \end{table}
 
 

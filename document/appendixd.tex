@@ -57,10 +57,15 @@ $N(s)，V(s)$は対戦に使用したモデルから導かれる．
 と同じ列を選択した場合の進行図を見ることができる．
 図\ref{fig:number-button}では「4」と描かれたボタンを押した結果，左から4番目を選択した場合の進行図が表示されていることがわかる．
 選択した位置は「*」マークで表示される．
-\begin{figure}[t]
-	\centering
-    \includegraphics[width=\linewidth]{./figure/trajSystem.pdf}
-	\caption{進行図の提示}
+
+
+
+\begin{figure}[htbp]
+    \centering
+    \setlength{\fboxsep}{1pt} % フレームの余白を調整
+    \setlength{\fboxrule}{1pt} % フレームの太さを調整
+    \fbox{\includegraphics[width=\linewidth]{./figure/trajSystem.pdf}}
+    \caption{進行図の提示}
 	\label{fig:number-button}
 \end{figure}
 想定図中の数字は数字の大きさの順番に石が置かれるというAIの予想を表している．図\ref{fig:multi}
@@ -69,7 +74,7 @@ $N(s)，V(s)$は対戦に使用したモデルから導かれる．
 赤が４つ以上つながると予想されていること，黄色く色づけられている場合はその部分で黄色が４つ以上つながると予想されているこを示している．
 また，提案手法による振り返りが適用されたグループでは提示される進行図が複数となる．そのため図\ref{fig:multi}に示すように他の想定図を見ることができる「next\_prej/pre\_traj」
 ボタンが追加される．
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=150pt]{./figure/multi.png}
 	\caption{提案手法による進行図の提示}
@@ -79,21 +84,29 @@ $N(s)，V(s)$は対戦に使用したモデルから導かれる．
 \subsection{1日目}
 1日目は被験者の操作間への慣れを促進するため全ての選択肢に対し進行図表示ボタン（数字ボタン）を設置した．
 図\ref{fig:traj-button}に示すようにこれらのボタンは「traj」ボタンを押すことで出現する．
-\begin{figure}[t]
-	\centering
-	\includegraphics[width=\linewidth]{./figure/traj-button.png}
-	\caption{進行図表示ボタン(1日目)}
+
+\begin{figure}[htbp]
+    \centering
+    \setlength{\fboxsep}{1pt} % フレームの余白を調整
+    \setlength{\fboxrule}{1pt} % フレームの太さを調整
+    \fbox{\includegraphics[width=\linewidth]{./figure/traj-button.png}}
+    \caption{進行図表示ボタン(1日目)}
 	\label{fig:traj-button}
 \end{figure}
+
 \subsection{2日目}
 2日目は進行図の閲覧を促進するためtrajボタンを廃止し，最も訪問回数$N(s,a)$の多い選択肢$a_{max}$，少ない選択肢$a_{min}$
 からの進行図を示すボタンをそれぞれ「best:(列の数字)」「worst:(列の数字)」のラベルで図\ref{fig:best-worst}のように表示した．
-\begin{figure}[t]
-	\centering
-	\includegraphics[width=\linewidth]{./figure/best-worst.png}
-	\caption{進行図表示ボタン(2日目)}
+
+\begin{figure}[htbp]
+    \centering
+    \setlength{\fboxsep}{1pt} % フレームの余白を調整
+    \setlength{\fboxrule}{1pt} % フレームの太さを調整
+    \fbox{\includegraphics[width=\linewidth]{./figure/best-worst.png}}
+    \caption{進行図表示ボタン(2日目)}
 	\label{fig:best-worst}
 \end{figure}
+
 \section{第2段階}
 第2段階は提案手法を用いて振り返りを行ったグループ(A)の被験者と比較手法を用いて振り返りを行ったグループ(B)の被験者の対戦である．
 1回の実験の中で2人の被験者が手番を入れ変え2回の対戦を行った．
