@@ -119,7 +119,7 @@ PV-モンテカルロ木探索の疑似コードをAlgorithm\ref{alg:mcts-1}，A
             \If{$s$が未探索のノード($N(s)=0$)または終了状態のとき}
              \Return  $Z$
             \EndIf
-           \State 訪問回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
+           \State 探索回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
            \For {each $a_i$ in $\alpha$}
              
              \State $s_{{next}_i} \gets T(s_{now}, a_i)$
@@ -136,7 +136,7 @@ PV-モンテカルロ木探索の疑似コードをAlgorithm\ref{alg:mcts-1}，A
                         \State $\zeta(s_{now}, s_{j})$ を$k$回$Z$の末尾に追加
                         \State continue
                     \EndIf
-                    \State 訪問回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
+                    \State 探索回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
                     \For {each $a_i$ in $\alpha$}
                         \State $s_{{next}_j} \gets T(s_{j}, a_i)$
                         \State $\zeta(s_{now},s_{{next}_i})(=\zeta(s_{now}, s_{j}).append({a_i, s_{{next}_i}}))$を$Z$の末尾に追加
@@ -198,7 +198,7 @@ PV-モンテカルロ木探索の疑似コードをAlgorithm\ref{alg:mcts-1}，A
 \section{提案手法におけるニューロ補間}
 第4章におけるデータ実験，インタフェース実験ではいずれも手法のニューラルネットワークによる補間を行っている．
 第4章で示した疑似コードでは未探索のノードにたどり着いた際は走査を終了する．ニューラルネットワークによる補間とはこの場合，
-方策$P(s, a)$で訪問回数$N(s, a)$を代用し走査を継続することである．
+方策$P(s, a)$で探索回数$N(s, a)$を代用し走査を継続することである．
 Algorithm\ref{alg:neuro-1}，Algorithm\ref{alg:neuro-2}にニューロ補間を行う場合の疑似コードを示す（変更部分に下線）．
 比較手法に対してニューロ補間を行う場合も同様にTraverse()のコードを変更する．
 \begin{algorithm}
@@ -215,7 +215,7 @@ Algorithm\ref{alg:neuro-1}，Algorithm\ref{alg:neuro-2}にニューロ補間を�
             \If{$s$が未探索のとき}
              \State \underline{方策$P(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す}
             \Else
-             \State 訪問回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
+             \State 探索回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
             \EndIf
            \For {each $a_i$ in $\alpha$}
              \State $s_{{next}_i} \gets T(s_{now}, a_i)$
@@ -235,7 +235,7 @@ Algorithm\ref{alg:neuro-1}，Algorithm\ref{alg:neuro-2}にニューロ補間を�
                     \If{$s$が未探索のとき}
                        \State \underline{方策$P(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す}
                    \Else
-                    \State 訪問回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
+                    \State 探索回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
                    \EndIf
                     
                     \For {each $a_i$ in $\alpha$}
@@ -274,7 +274,7 @@ Algorithm\ref{alg:neuro-1}，Algorithm\ref{alg:neuro-2}にニューロ補間を�
 \end{algorithm}
 \section{インタフェース実験における提案手法の変更}
 \label{sec:fix}
-インタフェース実験では画面の左下に盤面$s$の訪問回数$N(s)$と局面評価$V(s, a)$を表示する．このとき
+インタフェース実験では画面の左下に盤面$s$の探索回数$N(s)$と局面評価$V(s, a)$を表示する．このとき
 $V(s, a)$の絶対値（どちらのプレイヤーの勝利に近いか）と予想図の勝敗が異なる場合，ユーザーの混乱を招く可能性がある．
 そのため，提案手法では勝敗が$V(s, a)$の絶対値と一致する軌跡を表示するように修正を施した．
 インタフェース実験用に修正された疑似コードはAlgorithm:\ref{alg:system}となる．（下線が変更部分）
