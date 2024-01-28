@@ -1,6 +1,6 @@
 \chapter{評価実験}
 提案手法の有効性を示すため2種類の実験を行った．いずれもタスクの対象としてconnect4を扱っている．\\
-1つ目の実験(以下データ実験と表記)はコンピュータ同士の対戦データを用いて提案手法による想定図の妥当性を評価した．\\
+1つ目の実験(以下データ実験と表記)はコンピュータ同士の対戦データを用いて提案手法によるゲームの終了状態の予測精度を評価した．\\
 2つ目の実験(以下インタフェース実験と表記)は自作のGUIシステムを用いた提案手法の学習支援ツールとしての有効性を評価した．
 本章ではデータ実験，インタフェース実験の詳細と結果を記載する．
 
@@ -8,17 +8,17 @@
 
 \section{データ実験}
 \label{chap:evaluation}
-提案手法と後に述べる比較手法によるゲーム結果（後で勝敗も含める）の予測精度を比較した．
+提案手法と後に述べる比較手法によるゲームの最終状態の予測精度を比較した．
 \subsection{データセット}
-alphazero\_baselinモデル同士の対戦データ2000局分(盤面数:61049)を使用した．いずれもいずれも弱いAIが先番のデータを使用している．これは弱いAIが後番の場合評価関数の変動が極めて小さくなることと，弱い側が先番を選択することが指導において一般的とされるためである．
+alphazero\_baselinモデル同士の対戦データ2000局分(盤面数:61049)を使用した．いずれもいずれも弱いAIが先番のデータを使用している．これは弱いAIが先番でない場合評価関数の変動が極めて小さくなることと，弱い側が先番を選択することが指導において一般的とされるためである．
 
 
 
 \subsection{データ実験の評価指標}
-提案手法と次節で述べる比較手法による予測の精度を独自に定義した2つの定義group prediction rate($P_g$)，stone prediction rate($P_s$)によって計測した．stone prediction rate， group prediction rateの詳細な定義は付録Aに記載する．
+提案手法と次節で述べる比較手法による予測の精度を，独自に定義した2つの定義group prediction rate($P_g$)，stone prediction rate($P_s$)によって計測した．
 それぞれが，最終盤面において4つ以上連続して並ぶ石と組み合わせ(以下fatal stone，fatal groupと記載)の座標に対する予測精度を表している．
 
-本論文が提案する提案指標(group prediction rate， stone prediction rate)の計算において，盤面の座標は図\ref{fig:index}のように定められる．
+group prediction rate， stone prediction rateの計算において，盤面の座標は図\ref{fig:index}のように定められる．
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=300pt]{./figure/index.png}
@@ -38,16 +38,19 @@ group prediction rate($P_g$)， stone prediction rate($P_s$)は実際のゲー�
 
 
 \subsection{group prediction rate}
-group prediction rate はfatal groupの予測精度を示す2値(0または1)の指標である．
+group prediction rate はfatal groupの予測精度を示す2値(0または1)の指標であり，式\ref{pg}によって定義される．
 \begin{equation}
+    \label{pg}
 	{P_g = 1 \quad \textrm{If} \quad F_g \cap R_g \ne \phi \quad \textrm{Else} \quad 0}
 \end{equation}
 例外として$R_g=\phi$(引き分け)の場合，$F_g$も空集合であるならばgroup prediction rateは1となる．
 \subsection{stone prediction rate}
-stone prediction rateはfatal stoneの予測精度を示す．stone prediction rateの値域は[0, 1]である．
+stone prediction rateはfatal stoneの予測精度を示す連続値の指標であり，式\ref{ps}によって定義される．
+stone prediction rateの値域は[0, 1]である．
 (Count()は集合の要素数を数える関数)
 \begin{equation}
-	{P_s = \textrm{Min}(\frac{\textrm{Count}(F_s \cap R_s)}{4}, 1)  }
+    \label{ps}
+	{P_s = \textrm{Min}(\frac{\textrm{Count}F_s \cap R_s}{4}, 1)  }
 \end{equation}
 例外として$R_s=\phi$(引き分け)の場合，$F_s$も空集合であるならばstone prediction rateは1となる．
 
@@ -63,20 +66,31 @@ stone prediction rateはfatal stoneの予測精度を示す．stone prediction r
 
 
 \subsection{比較手法}
-提案手法と比較手法はそれぞれ以下の方式で予測を行う．
-比較手法の詳細なアルゴリズムは付録\ref{chap:alg}に記載した．
-\newpage
-\begin{itemize}
-	\item 比較手法: 探索の開始地点から最も探索回数が大きい選択肢を選び続けたたどり着いた最終局面の$F_s， F_g$を用いる．
-	\item 提案手法: 集めた盤面における4つ繋がっている石を集計し，最も出現頻度が高いfatal group を$F_s$， 2番目までに出現頻度が高いfatal groupを$F_g$として用いる．組み合わせを2つ記録する理由は下の図のように最終的に繋がっている組み合わせが2つある可能性を考慮するためである．
-\end{itemize}
-図\ref{fig:compare}は比較手法と提案手法の概要を示している．
+提案手法に対する比較手法は第2章の「constrative explanation」の段で述べた「最も有力な」「単一の」予想図を用いた手法である．
+図\ref{fig:compare}に示すように比較手法が決定木中の単一の分岐を用いるのに対し，提案手法が決定木中の複数の分岐を用いる．
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\linewidth]{./figure/compare-image.png}
 	\caption{提案手法と比較手法の比較}
 	\label{fig:compare}
 \end{figure}
+提案手法と比較手法はそれぞれ以下の方式で予測を行う．
+比較手法の詳細なアルゴリズムは付録\ref{chap:alg}に記載した．
+\newpage
+\begin{itemize}
+	\item 比較手法: 探索の開始地点から最も探索回数が大きい選択肢を選び続けたたどり着いた最終局面の$F_s， F_g$を用いる．
+	\item 提案手法: 第3章で述べたアルゴリズムによって収集された最終状態の集合$S=\{s_{edge_1}, s_{edge_2}, ..., s_{edge_{k^l}}\}$
+	    を指標ごとにグループ化する.
+		\begin{itemize}
+			\item group prediction rate: fatal groupによって$S$をグループ化してできた集合$\{S_{g_1}, S_{g_2}, ..., S_{g_n}\}$($S_{g_i}$は組み合わせ$g_i$がfatal groupに含まれている盤面の集合)
+			を要素が多い順に2つ取り出す.抽出された2つの集合$\{S_{g_{m_1}}, S_{g_{m_2}}\}$における$\{g_{m_1}, g_{m_2}\}$で構成される集合を$F_g$とし，group prediction rateを計算した. 組み合わせを2組記録する理由は
+            図\ref{fig:cal-compare}の左側の図のように最終
+            的に繋がっている組み合わせが2つある可能性を考慮するためである．
+            
+			\item stone prediction rate: $g_{m_1}$を$F_s$とし，stone prediction rateを計算した.
+		\end{itemize}
+\end{itemize}
+
 また，提案手法による予測が図\ref{fig:g-example}のようになる場合，$[1,2,3,4]$が最も多く含まれているfatal group
 であり，2番目は$[1, 9, 17, 25]$である．そのため，提案手法全体による予測結果は$F_g=\{[1, 2, 3, 4], [1, 9, 17, 25]\}， F_s=\{1, 9, 17, 25\}$となる．
 \begin{figure}[htbp]
@@ -86,19 +100,6 @@ stone prediction rateはfatal stoneの予測精度を示す．stone prediction r
 	\label{fig:g-example}
 \end{figure}
 
-\subsection{データ実験における提案指標の計測}
-
-\begin{enumerate}
-	\item 比較手法: 決定木の走査によりたどり着いた$F_s， F_g$によってstone prediction rate， group prediction rateを計算した
-	\item 提案手法: 第3章で述べたアルゴリズムによって収集された最終状態の集合$S=\{s_{edge_1}, s_{edge_2}, ..., s_{edge_{k^l}}\}$
-	    を指標ごとにグループ化する.
-		\begin{itemize}
-			\item group prediction rate: fatal groupによって$S$をグループ化してできた集合$\{S_{g_1}, S_{g_2}, ..., S_{g_n}\}$($S_{g_i}$は組み合わせ$g_i$がfatal groupとなっている盤面の集合)
-			を要素が多い順に2つ取り出す.抽出された2つの集合$\{S_{g_{m_1}}, S_{g_{m_2}}\}$における$\{g_{m_1}, g_{m_2}\}$で構成される集合を$F_g$とし，group prediction rateを計算した.
-			\item stone prediction rate: $g_{m_1}$を$F_s$とし，stone prediction rateを計算した.
-		\end{itemize}
-		
-\end{enumerate}
 
 \subsection{実験結果(データ実験)}
 盤面データのうち，手数(盤面上の赤または黄色)が13$\sim$24のものに対して実験を行った．
@@ -121,10 +122,10 @@ stone prediction rateはfatal stoneの予測精度を示す．stone prediction r
 	\label{table:result-online}
 \end{table}
 \subsection{考察(データ実験)}
-提案手法はgroup prediction rateにおいて比較手法より高い結果を示した．
-この結果は提案手法がfatal groupを予測する能力に長けている事を意味する．
+提案手法はgroup prediction rateの平均値において比較手法より高い値を示した．
+この結果は提案手法がfatal group(ゲームの終了状態において4つ繋がる組み合わせ)を予測する能力に長けている事を意味する．
 比較手法によって予測されるfatal groupの集合は
-最も探索回数が大きい軌跡が辿り着く１つの最終状態のものである．
+最も探索回数が大きい軌跡が辿り着く単一の最終状態のものである．
 一方で提案手法により予測されるfatal groupの集合は，複数の軌跡がそれぞれに辿り着く最終状態のfatal groupの多数派投票によって決定され，第1位と第2位のものが採用される．\\
 使用した対戦データは対戦者間の強さに差があり，予測は強い側の決定木を用いている．
 決定木内での最も探索回数の大きい軌跡(以下主軌跡と記載)はAIが予測する双方が最善を尽くした場合の進行と解釈される．
@@ -135,8 +136,8 @@ stone prediction rateはfatal stoneの予測精度を示す．stone prediction r
 
 
 \section{インタフェース実験}
-提案手法の人間に対する有効性を示すため以下のように自作したconnect4の学習支援システムを用いて実験を行った．
-自作システムの開始画面は\ref{fig:basic}のように構成されており，右側の青い正方形の部分をクリックすることでconnect4をプレイできる．
+提案手法の人間に対する学習支援効果を示すため以下のように自作したconnect4の学習支援システムを用いて実験を行った．
+自作システムの開始画面は図\ref{fig:basic}のように構成されており，右側の青い正方形の部分をクリックすることでconnect4をプレイできる．
 実験対象者は大学生，大学院生の22名(男性17名:女性5名)となった．
 \begin{figure}[htbp]
     \centering
@@ -150,9 +151,8 @@ stone prediction rateはfatal stoneの予測精度を示す．stone prediction r
 \subsection{実験手順}
 実験は被験者1人あたりにつき3回行われ，1回目と2回目を第1段階(提案手法による学習)，3回目を第2段階(被験者同士の対戦)とした．
 ここでは第1段階である提案手法の学習について述べる．
-\newpage
-\paragraph{第1段階(提案手法による学習)}~
-\par 提案システムを用いた学習はさらに
+
+提案システムを用いた学習はさらに
 \begin{itemize}
 	\item AIシステム(alphazero\_baseline)との対戦
 	\item 提案手法によるゲームの振り返り
@@ -291,10 +291,10 @@ t検定を行ったが，いずれも有意な差は見当たらなかった．
 	
 \end{table}
 また，第3章で示した新たな重要度の定義(式\ref{new-imp})の妥当性を検証するため，盤面$s$の重要度$I(s)$と被験者が$s$の進行図を
-見た時間$t$の相関を調査した．比較手法には式\ref{imp}の定義を用いた．
-表\ref{table:result-imp}に示したように，いずれの手法による重要度も$t$との有意な相関が見られなかった．
+見た時間$\textrm{time}_{see}$の相関を調査した．比較手法には式\ref{imp}の定義を用いた．
+表\ref{table:result-imp}に示したように，いずれの手法による重要度も$\textrm{time}_{see}$との有意な相関が見られなかった．
 \begin{table}[H]
-	\caption{手法別の重要度と$t$の相関(インタフェース実験)}
+	\caption{手法別の重要度と$\textrm{time}_{see}$の相関(インタフェース実験)}
     \label{table:result-imp}
 	\centering
 	\scalebox{0.98}[0.98]{
@@ -321,7 +321,7 @@ t検定を行ったが，いずれも有意な差は見当たらなかった．
 
 の方がよりグループAからの評価が高いことが分かった．
 付録\ref{chap:system}で述べるように，1日目と2日目ではGUIの設定に差があり
-1日目のGUIでは全ての選択肢(最大7種)を起点とした進行図を閲覧可能であるのに対し，2日目のGUIでは起点となる選択肢を
+1日目のGUIでは全ての選択肢(最大7種)に対して進行図を閲覧可能であるのに対し，2日目のGUIでは選択肢を
 2つに制限した．
 そのため，2日目は被験者が見られる進行図の数が1日目の約$\frac{1}{3}$となる．
 
@@ -355,24 +355,16 @@ t検定を行ったが，いずれも有意な差は見当たらなかった．
 
 グループAのデータを日にちと先読み手数で分けた場合最も把握満足度が高いのは
 「2日目に先読み制限なし」，次いで「1日目に先読み制限なし」，「1日目に先読み3手」となった．
-最も情報が少ない「2日目に3手」はグループAの全8パターン中最下位となった．\\
-
-
+最も情報が少ない「2日目に3手」はグループAの全8パターン中最下位となった．
 グループBに対しても同様に「振り返りによってAIの意図を掴むことができたと感じますか」への評価を集計した結果，
 最も評価が高いのは「2日目に5手」，次いで「2日目に7手」，「1日目に3手」となった．\\
-
-
-
 また，付録\ref{chap:data}の表\ref{table:tail}より提案手法が示す1組の状態$s$，行動$a$について示す軌跡の数$n$の平均は約10であるため，比較手法が示す情報量は提案手法の約$\frac{1}{10}$となる．
 また，先読みの手数に制限が無い場合の手数の平均は約15手である．
 そのため提示する情報量が大きい程評価が高くなるわけではなく，手法ごとに被験者が適切と感じる情報量が存在すると推測される．\\
-
 以上の考察
 を踏まえて，被験者に対して提示する情報を最小化した上で適切な情報量を調査するため，
 先読みを1$\sim$5手として再実験を行った．
-インタフェース実験では補助として提示した探索回数，局面評価に注目する被験者が多く見られたため，探索回数「count」(探索回数)の表示を廃止し，「value」(局面評価)と進行図の閲覧は被験者の手番（先番）となる盤面でのみ可能とした．
-
-結果を\ref{table:add-result}に示す．
+インタフェース実験では補助として提示した探索回数，局面評価に注目する被験者が多く見られたため，探索回数「count」(探索回数)の表示を廃止し，「value」(局面評価)と進行図の閲覧は被験者の手番（先番）となる盤面でのみ可能とした．結果を\ref{table:add-result}に示す．
 
 \begin{table}[H]
     \caption{先読み手数制限なしの場合(追加実験)}
@@ -395,7 +387,7 @@ t検定を行ったが，いずれも有意な差は見当たらなかった．
 
 
 把握満足度と「充分な情報量」の平均は提案手法の方が高くなった．そのため，被験者が比較手法では情報量が不十分であると感じている
-際に，提案手法で情報を補足することには一定の意義があると推測される．ただし，t検定による有意差は見当たらなかった．
+際に，提案手法によって情報を補足することには一定の意義があると推測される．ただし，t検定による有意差は見当たらなかった．
 また，先読みが1手や2手の場合は，提案手法による軌跡が枝分かれせず，結果的に表示される軌跡の数が小さくなる．
 そのため，提案手法と比較手法の差異は「決定木中のどの部分を取り出すか」の差異となる．
 付録\ref{chap:alg}の\ref{sec:fix}で述べたように提案手法で示す進行図は盤面の局面評価と符合するように調整されていることも評価に寄与したと
