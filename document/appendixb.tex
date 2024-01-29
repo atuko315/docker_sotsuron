@@ -19,13 +19,11 @@ PV-モンテカルロ木探索の疑似コードをAlgorithm\ref{alg:mcts-1}，A
             \State Set $s_{now} = s_{start}$ and $a_{now} = a_m$
             \For {each simulation}
                 \State $\zeta \gets \textrm{empty list}$
-                \State $s_{\text{current}} \gets s_{\text{start}}$
-                \While {$s_{\text{current}}$ がゲームの終了状態でない場合}
+                \While {$s_{\text{now}}$ がゲームの終了状態でない場合}
                     \State $a_t \gets TreePolicy(s)$
-                    \State (Tは遷移関数)
-                    \State $(s_{\text{current}}, a_t)$を $\zeta $の末尾に追加
-                    \State $s_{\text{next}} \gets T(s_{\text{current}}, a_t)$
-                    \State $s_{\text{current}} \gets s_{\text{next}}$
+                    \State $(s_{\text{now}}, a_t)$を $\zeta $の末尾に追加
+                    \State $s_{\text{next}} \gets T(s_{\text{now}}, a_t)$
+                    \State $s_{\text{now}} \gets s_{\text{next}}$
                     
                 \EndWhile
                 \State $G \gets V(s_e)$ 
@@ -43,17 +41,17 @@ PV-モンテカルロ木探索の疑似コードをAlgorithm\ref{alg:mcts-1}，A
     \begin{algorithmic}[1]
         \Function{TreePolicy}{$s$}
             \If {$s$が探索されていない子ノードを持つとき}
-                \State $s_c \gets T(s, a)$ ($s_c$は未探索のノード)
+                \State Set $s_{c} = T(s, a)$ ($s_c$は未探索のノード)
                 \State \Call{InitNode}{$s_c$}
                 \State \Return $a$
             \Else
-                \State 以下のPUCTスコア$U(s, a)$を計算
+                \State 以下の$U(s, a)$を各行動に対して計算
                 \State $U(s, a)= C(s)P(s, a)\frac{\sqrt{N(s)}}{1+N(s, a)}$
                 \State $C(s)=\textrm{log}\frac{1+N(s)+C_{\textrm{base}}}{C_{\textrm{base}}}+C_{\textrm{init}}$
                 \State($C_{\textrm{base}}$, $C_{\textrm{init}}$はハイパーパラメータ)
-                \State $(N(s)=\Gamma N(s, a))$
+                \State $(N(s)=\Sigma N(s, a))$
                 \State 以下のように$a$を求める
-                \State $a = {\textrm{argmax}}_a (Q(s, a)+U(s, a))$
+                \State $a = {\underset{a}{\textrm{argmax}}} (Q(s, a)+U(s, a))$
                 \State \Return $a$
                 
             \EndIf
@@ -119,7 +117,7 @@ PV-モンテカルロ木探索の疑似コードをAlgorithm\ref{alg:mcts-1}，A
             \If{$s$が未探索のノード($N(s)=0$)または終了状態のとき}
              \Return  $Z$
             \EndIf
-           \State 探索回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
+           \State $s$からの探索回数が上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
            \For {each $a_i$ in $\alpha$}
              
              \State $s_{{next}_i} \gets T(s_{now}, a_i)$
@@ -136,7 +134,7 @@ PV-モンテカルロ木探索の疑似コードをAlgorithm\ref{alg:mcts-1}，A
                         \State $\zeta(s_{now}, s_{j})$ を$k$回$Z$の末尾に追加
                         \State continue
                     \EndIf
-                    \State 探索回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
+                    \State $s$からの探索回数が上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
                     \For {each $a_i$ in $\alpha$}
                         \State $s_{{next}_j} \gets T(s_{j}, a_i)$
                         \State $\zeta(s_{now},s_{{next}_i})(=\zeta(s_{now}, s_{j}).append({a_i, s_{{next}_i}}))$を$Z$の末尾に追加
@@ -150,7 +148,7 @@ PV-モンテカルロ木探索の疑似コードをAlgorithm\ref{alg:mcts-1}，A
         \State $s_{now} \gets s$
         \State $\zeta_r \gets \zeta(s_{start}, s)$
         \While {$s_{now}が探索済みかつ終了状態でない$}
-            \State $a_t \gets \textrm{argmax}_a N(s_{now}, a)$
+            \State $a_t \gets {\underset{a}{\textrm{argmax}}} N(s_{now}, a)$
             \State $s_n \gets T(s_{now}, a_t)$
             \State $\zeta_r.append({a_t, s_n})$
             \State $s_{now} \gets s_n$
@@ -171,10 +169,10 @@ PV-モンテカルロ木探索の疑似コードをAlgorithm\ref{alg:mcts-1}，A
         \State $t$: 手法を適用する探索木
         \State $T$: 状態遷移関数
         \State $\zeta(s, s')$: ノード$s$から$s'$までの軌跡
-        \Function{CompareAlgorithm}{$s, a$}
+        \Function{BaselineAlgorithm}{$s, a$}
            \State $s_n \gets T(s, a)$
            \State $\zeta(s, s_n) \gets \{s, a, s_n\}$
-           \State $\zeta \gets$ \Call{$s_n, \zeta(s, s_n)$}
+           \State $\zeta \gets$ \Call{Traverse}{$s_n, \zeta(s, s_n)$}
            \Return $\zeta$
         \EndFunction
         
@@ -182,7 +180,7 @@ PV-モンテカルロ木探索の疑似コードをAlgorithm\ref{alg:mcts-1}，A
             \State $s_{now} \gets s$
             \State $\zeta_r \gets \zeta(s_{start}, s)$
             \While {$s_{now}が探索済みかつ終了状態でない$}
-                \State $a_t \gets \textrm{argmax}_a N(s_{now}, a)$
+                \State $a_t \gets {\underset{a}{\textrm{argmax}}} N(s_{now}, a)$
                 \State $s_n \gets T(s_{now}, a_t)$
                 \State $\zeta_r.append({a_t, s_n})$
                 \State $s_{now} \gets s_n$
@@ -194,7 +192,7 @@ PV-モンテカルロ木探索の疑似コードをAlgorithm\ref{alg:mcts-1}，A
     \end{algorithmic}
 \end{algorithm}
 
-
+\pagebreak
 \section{提案手法におけるニューロ補間}
 第4章におけるデータ実験，インタフェース実験ではいずれも手法のニューラルネットワークによる補間を行っている．
 第4章で示した疑似コードでは未探索のノードにたどり着いた際は走査を終了する．ニューラルネットワークによる補間とはこの場合，
@@ -213,9 +211,9 @@ Algorithm\ref{alg:neuro-1}，Algorithm\ref{alg:neuro-2}にニューロ補間を�
              \Return  $Z$
             \EndIf
             \If{$s$が未探索のとき}
-             \State \underline{方策$P(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す}
+             \State \underline{$s$からの方策の値が上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す}
             \Else
-             \State 探索回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
+             \State $s$からの探索回数が上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
             \EndIf
            \For {each $a_i$ in $\alpha$}
              \State $s_{{next}_i} \gets T(s_{now}, a_i)$
@@ -233,9 +231,9 @@ Algorithm\ref{alg:neuro-1}，Algorithm\ref{alg:neuro-2}にニューロ補間を�
                         \State continue
                     \EndIf
                     \If{$s$が未探索のとき}
-                       \State \underline{方策$P(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す}
+                       \State \underline{$s$からの方策の値が上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す}
                    \Else
-                    \State 探索回数$N(s)$から上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
+                    \State $s$からの探索回数が上位$k$の行動$\{a_1, a_2, ..., a_{k}\}(=\alpha)$を取り出す
                    \EndIf
                     
                     \For {each $a_i$ in $\alpha$}
@@ -243,7 +241,8 @@ Algorithm\ref{alg:neuro-1}，Algorithm\ref{alg:neuro-2}にニューロ補間を�
                         \State $\zeta(s_{now},s_{{next}_i})(=\zeta(s_{now}, s_{j}).append({a_i, s_{{next}_i}}))$を$Z$の末尾に追加
                     \EndFor
                     
-                \EndFor     
+                \EndFor 
+                \State $i \gets i+1$
            \EndWhile
            \Return $Z(=\{\zeta(s_{start}, {s'}_1), ..., \zeta(s_{start}, {s'}_{k^l})\})$
         \EndFunction
@@ -258,9 +257,9 @@ Algorithm\ref{alg:neuro-1}，Algorithm\ref{alg:neuro-2}にニューロ補間を�
         \State $\zeta_r \gets \zeta(s_{start}, s)$
         \While {$s_{now}$が終了状態でない}
             \If{$s_{now}$が未探索のとき}
-                \State \underline{$a_t \gets \textrm{argmax}_a P(s_{now}, a)$}
+                \State \underline{$a_t \gets {\underset{a}{\textrm{argmax}}} P(s_{now}, a)$}
             \Else
-                \State $a_t \gets \textrm{argmax}_a N(s_{now}, a)$
+                \State $a_t \gets {\underset{a}{\textrm{argmax}}} N(s_{now}, a)$
             \EndIf
             \State $s_n \gets T(s_{now}, a_t)$
             \State $\zeta_r.append({a_t, s_n})$
@@ -274,10 +273,10 @@ Algorithm\ref{alg:neuro-1}，Algorithm\ref{alg:neuro-2}にニューロ補間を�
 \end{algorithm}
 \section{インタフェース実験における提案手法の変更}
 \label{sec:fix}
-インタフェース実験では画面の左下に盤面$s$の探索回数$N(s)$と局面評価$V(s, a)$を表示する．このとき
+インタフェース実験では画面の左下に盤面$s$からの探索回数$\{N(s, a_1), ..., N(s, a_7)\}$と局面評価$V(s, a)$を表示する．このとき
 $V(s, a)$の絶対値（どちらのプレイヤーの勝利に近いか）と予想図の勝敗が異なる場合，ユーザーの混乱を招く可能性がある．
 そのため，提案手法では勝敗が$V(s, a)$の絶対値と一致する軌跡を表示するように修正を施した．
-インタフェース実験用に修正された疑似コードはAlgorithm:\ref{alg:system}となる．（下線が変更部分）
+インタフェース実験用に修正された疑似コードはAlgorithm\ref{alg:system}となる．（下線が変更部分）
 また，提案手法により収集した最終盤面$S=\{s_{edge_1}, s_{edge_2}, ..., s_{edge_{k^l}}\}$は
 最終的に４つ以上連続してつながっている石の組み合わせ(fatal group)でグループ化し，最も要素数が多い集合の軌跡をユーザーに提示した．
 
@@ -293,9 +292,9 @@ $V(s, a)$の絶対値（どちらのプレイヤーの勝利に近いか）と�
         \State $\zeta_r \gets \zeta(s_{start}, s)$
         \While {$s_{now}$が終了状態でない}
             \If{$s_{now}$が未探索のとき}
-                \State \underline{$a_t \gets \textrm{argmax}_a P(s_{now}, a)$}
+                \State \underline{$a_t \gets {\underset{a}{\textrm{argmax}}} P(s_{now}, a)$}
             \Else
-                \State $a_t \gets \textrm{argmax}_a N(s_{now}, a)$
+                \State $a_t \gets {\underset{a}{\textrm{argmax}}} N(s_{now}, a)$
             \EndIf
             \State $s_n \gets T(s_{now}, a_t)$
             \State $\zeta_r.append({a_t, s_n})$

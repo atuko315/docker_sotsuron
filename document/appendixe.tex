@@ -1,6 +1,6 @@
 \chapter{追加実験の詳細}
 \label{chap:system}
-インタフェース実験では全3回にわたる実験を行ったが追加実験ではシステムの実験の第1段階における1日目のみを実施した．
+インタフェース実験では全3回にわたる実験を行ったのに対し，追加実験ではシステムの実験の第1段階における1日目のみを実施した．
 \section{被験者のデータ}
 実験対象者は計22人の大学生，大学院生(男性6名:女性4名)であり，インタフェース実験と同様の事前質問を行った結果を
 表\ref{table:before-extra}に示す．
@@ -9,6 +9,7 @@
 \begin{table}[H]
     \caption{事前質問項目:追加実験}
     \label{table:before-extra}
+    \centering
 	\scriptsize
     \begin{tabular}{l||c}
         \multicolumn{1}{c|}{質問} & 回答の平均\\ \hline \hline
@@ -25,8 +26,8 @@ AIの強さは表\ref{table:param-system}における「弱いAI」モデルを�
 
 \subsection{振り返りモード(GUI)の詳細}
 GUIは主にインタフェース実験第1段階における2日目のGUIと類似している．
-ただし，図\ref{fig:extra}に示すように探索回数「counts」の表記を廃止し，「value」と数字ボタンは「traj\&value」ボタンを
-押した際に出現する．
+ただし，図\ref{fig:extra}に示すように探索回数「counts」の表記を廃止した．「value」と数字ボタンは表示されている局面が赤のプレイヤーの手番である際に「traj\&value」ボタンを
+押すことで出現する．
 \begin{figure}[htbp]
 	\centering
     \includegraphics[width=\linewidth]{./figure/extra.png}
@@ -37,15 +38,15 @@ GUIは主にインタフェース実験第1段階における2日目のGUIと類
 \subsection{アルゴリズムの変更}
 追加実験では最も探索回数$N(s, a)$が大きい行動$a_m$から派生する進行図と$a_m$から「最も遠い」行動$a_l$から派生する進行図と
 を表示する．
-「最も遠い」行動$a_l$は以下の手順によって定められる．また，アルゴリズムの疑似コードはAlgorithm\label{alg:myalg-add} に記載している．
+「最も遠い」行動$a_l$は以下の手順によって定められる．また，アルゴリズムの疑似コードはAlgorithm\ref{alg:myalg-add} に記載している．
 \begin{enumerate}
     \item 盤面$s$から派生する各行動$\{a_1, a_2, ..., a_n\}$に対して提案手法または比較手法による
     軌跡を収集する．その際に各行動に対して局面評価$Q(s, a)$と軌跡の長さの平均$L(s, a)$を記録する．
     \item 最も探索回数$N(s, a)$が大きい行動$a_m$による局面評価を$v(=Q(s, a_m))$とする．
-    また，任意の閾値$l$に対して$\textrm{margin}_m(=l-L(s, a_m))$を計算する．
+    また，任意の閾値$l$に対して$\underset{m}{\textrm{margin}}(=l-L(s, a_m))$を計算する．
     \item 局面評価の符号が$v$と異なる行動$\{a_{d_1}, a_{d_2}, ..., a_{d_k}\}$を取り出す．
     \item $\{a_{d_1}, a_{d_2}, ..., a_{d_k}\}$内の各行動に対して$\textrm{margin}(=l-L(s, a))$を計算し，
-    $\textrm{margin}$の符号が$\textrm{margin}_m$と異なる行動$\{{a'}_{1}, {a'}_{2}, ..., {a'}_{k}\}$を取り出す．
+    $\textrm{margin}$の符号が$\underset{m}{\textrm{margin}}$と異なる行動$\{{a'}_{1}, {a'}_{2}, ..., {a'}_{k}\}$を取り出す．
     \item 取り出した行動のうち軌跡の長さの平均$L(s, a)$が$L(s, a_m)$と最も遠い行動$a_l$を最適な行動$a_m$から最も遠い行動
     とする．
 \end{enumerate}
@@ -53,7 +54,7 @@ GUIは主にインタフェース実験第1段階における2日目のGUIと類
 つまり，「予測される勝敗」と「あとどのくらいでゲームが終了するか」の予想がなるべく$a_m$による予想と異なるものを取り出すことを意味している．
 
 また，第4章の図\ref{fig:regroup}に記載したように，被験者に与える情報を可能な限り少なくする目的で取り出した進行図の軌跡を末尾の3手で
-さらにグループ化し，提案手法において1組の状態$s$，行動$a$に対して閲覧できる進行図の数は3つまでとした．
+さらにグループ化した．再グループ化により提案手法において1組の状態$s$，行動$a$に対して閲覧できる進行図の数は3つまでとした．
 図\ref{fig:re-regroup}に再度，再グループ化の様子を示す．
 \begin{figure}[htbp]
 	\centering
@@ -75,7 +76,7 @@ GUIは主にインタフェース実験第1段階における2日目のGUIと類
         
         
        
-        \Function{ExtactDistantChoice}{$s_{start}$}
+        \Function{ExtractDistantChoice}{$s_{start}$}
            \For {each $i$ in $\{1, 2, 3, 4\}$}
                $A_i \gets $ empty list
            \EndFor
@@ -107,11 +108,12 @@ GUIは主にインタフェース実験第1段階における2日目のGUIと類
 
            \For {each $i$ in $\{1, 2, 3, 4\}$}
                 \If{$A_i$の要素数が１以上}
-                   $A_0 \gets A_i$
+                   \State $A_0 \gets A_i$
+                   \State break
                 \EndIf
            \EndFor
            \State $d \gets 0$
-           \State $a_l \gets \textrm{argmax}_a (|L(s,a)-L_m|)$
+           \State $a_l \gets {\underset{a}{\textrm{argmax}}} (|L(s,a)-L_m|)$
            \State \Return $a_l$
         \EndFunction
     \end{algorithmic}
@@ -129,6 +131,6 @@ GUIは主にインタフェース実験第1段階における2日目のGUIと類
 
 
 \section{質問項目の詳細}
-質問項目は表\ref{table:query}に記載した質問に加え，「タスクの熟達度に関連する質問(a)」として「振り返りでは対戦を振り返るのに十分な量の情報を受け取ることができたと思いますか」
+質問項目は表\ref{table:query}に記載した質問に加え，「タスクの上達度に関連する質問(a)」として「振り返りでは対戦を振り返るのに十分な量の情報を受け取ることができたと思いますか」
 という質問を追加した．
 
